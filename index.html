@@ -1,0 +1,501 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Betting Tracker</title>
+  <meta name="theme-color" content="#020817" />
+
+  <style>
+    :root{
+      --bg:#020817;
+      --card:#0f172a;
+      --border:#1f2937;
+      --fg:#e5e7eb;
+      --muted:#9ca3af;
+      --accent:#22c55e;
+      --accent-soft:#064e3b;
+      --danger:#ef4444;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      padding:0;
+      background:var(--bg);
+      color:var(--fg);
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;
+    }
+    .container{
+      max-width:960px;
+      margin:0 auto;
+      padding:16px;
+    }
+    .card{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:14px;
+      padding:16px;
+      margin-top:12px;
+    }
+    h1,h2,h3{
+      margin:4px 0 8px;
+      font-weight:600;
+    }
+    .small{
+      font-size:13px;
+      color:var(--muted);
+    }
+    button,input,select,textarea{
+      width:100%;
+      padding:12px;
+      border-radius:10px;
+      border:1px solid var(--border);
+      background:#020817;
+      color:var(--fg);
+      font-size:15px;
+      font-family:inherit;
+    }
+    button{
+      cursor:pointer;
+      font-weight:600;
+      background:var(--accent);
+      color:#022c22;
+      border-color:#16a34a;
+    }
+    button.secondary{
+      background:#111827;
+      color:var(--fg);
+      border-color:var(--border);
+    }
+    button.danger{
+      background:var(--danger);
+      color:#111827;
+      border-color:#b91c1c;
+    }
+    .grid{
+      display:grid;
+      gap:10px;
+    }
+    .cols-2{ grid-template-columns:1fr 1fr; }
+    .cols-3{ grid-template-columns:repeat(3,1fr); }
+    .right{ text-align:right; }
+    .pill{
+      display:inline-block;
+      padding:4px 9px;
+      border-radius:999px;
+      font-size:11px;
+      border:1px solid var(--border);
+      color:var(--muted);
+    }
+    .summary{
+      display:grid;
+      gap:10px;
+      grid-template-columns:repeat(auto-fit,minmax(130px,1fr));
+      margin-top:6px;
+    }
+    .sum-box{
+      padding:10px;
+      border-radius:12px;
+      background:#020817;
+      border:1px solid var(--border);
+      text-align:center;
+    }
+    .sum-label{
+      font-size:11px;
+      color:var(--muted);
+    }
+    .sum-value{
+      margin-top:4px;
+      font-size:18px;
+      font-weight:700;
+    }
+    table{
+      width:100%;
+      border-collapse:collapse;
+      margin-top:10px;
+      table-layout:fixed;
+    }
+    th,td{
+      padding:8px;
+      border-bottom:1px solid var(--border);
+      font-size:12px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    th{
+      color:var(--muted);
+      font-weight:500;
+      text-align:left;
+      position:sticky;
+      top:0;
+      background:var(--card);
+      z-index:1;
+    }
+    td input, td select{
+      padding:6px;
+      font-size:11px;
+      background:#020817;
+    }
+    .hidden{ display:none !important; }
+
+    @media (max-width: 720px){
+      h1{font-size:20px}
+      h3{font-size:16px}
+      button,input,select,textarea{font-size:14px;padding:11px}
+      th,td{font-size:11px}
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <!-- Login -->
+  <section id="loginCard" class="card">
+    <h1>Betting Tracker</h1>
+    <p class="small">Private app. Sign in with your existing Firebase email/password. This does not affect your other apps.</p>
+    <input id="email" type="email" placeholder="Email" autocomplete="username" />
+    <input id="password" type="password" placeholder="Password" autocomplete="current-password" />
+    <button id="loginBtn">Login</button>
+    <p id="loginErr" class="small" style="color:#fca5a5;"></p>
+  </section>
+
+  <!-- App -->
+  <section id="appCard" class="card hidden">
+    <div class="grid cols-2" style="align-items:center;margin-bottom:4px;">
+      <div>
+        <h2>Betting Dashboard</h2>
+        <div class="small">Track all betting trades separately from your main trading + expenses.</div>
+      </div>
+      <div class="right">
+        <div class="small" id="userEmail"></div>
+        <button id="logoutBtn" class="secondary" style="margin-top:6px;">Logout</button>
+      </div>
+    </div>
+
+    <!-- Summary -->
+    <div class="summary">
+      <div class="sum-box">
+        <div class="sum-label">Total Stakes</div>
+        <div class="sum-value" id="sumStake">$0.00</div>
+      </div>
+      <div class="sum-box">
+        <div class="sum-label">Total Returns</div>
+        <div class="sum-value" id="sumReturn">$0.00</div>
+      </div>
+      <div class="sum-box">
+        <div class="sum-label">Net P/L</div>
+        <div class="sum-value" id="sumPL">$0.00</div>
+      </div>
+    </div>
+
+    <!-- Add Bet -->
+    <div class="card" style="margin-top:14px;">
+      <h3>Add Bet</h3>
+      <div class="grid cols-2">
+        <div>
+          <span class="small">Date</span>
+          <input id="betDate" type="date">
+        </div>
+        <div>
+          <span class="small">Book / Exchange</span>
+          <input id="betBook" placeholder="e.g. Stake, Bet365, Pinnacle">
+        </div>
+      </div>
+      <div class="grid cols-2" style="margin-top:8px;">
+        <div>
+          <span class="small">Event / Market</span>
+          <input id="betEvent" placeholder="e.g. EPL - Arsenal vs City">
+        </div>
+        <div>
+          <span class="small">Selection</span>
+          <input id="betSelection" placeholder="e.g. Arsenal ML">
+        </div>
+      </div>
+      <div class="grid cols-3" style="margin-top:8px;">
+        <div>
+          <span class="small">Stake</span>
+          <input id="betStake" type="number" step="0.01" placeholder="100">
+        </div>
+        <div>
+          <span class="small">Odds (decimal)</span>
+          <input id="betOdds" type="number" step="0.01" placeholder="1.90">
+        </div>
+        <div>
+          <span class="small">Result</span>
+          <select id="betResult">
+            <option value="pending">Pending</option>
+            <option value="won">Won</option>
+            <option value="lost">Lost</option>
+            <option value="void">Void</option>
+          </select>
+        </div>
+      </div>
+      <div style="margin-top:8px;">
+        <span class="small">Notes (optional)</span>
+        <textarea id="betNotes" rows="2" placeholder="Reasoning, line movement, etc."></textarea>
+      </div>
+      <button id="addBetBtn" style="margin-top:10px;">Save Bet</button>
+      <p id="addErr" class="small" style="color:#fca5a5;"></p>
+    </div>
+
+    <!-- Bets History -->
+    <div class="card">
+      <h3>Bets History</h3>
+      <div class="grid cols-2">
+        <input id="filterText" placeholder="Filter by event / selection / book">
+        <select id="filterStatus">
+          <option value="all">All</option>
+          <option value="pending">Pending</option>
+          <option value="won">Won</option>
+          <option value="lost">Lost</option>
+          <option value="void">Void</option>
+        </select>
+      </div>
+      <div class="history-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Book</th>
+              <th>Selection</th>
+              <th>Stake</th>
+              <th>Odds</th>
+              <th>Result</th>
+              <th>P/L</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="betsRows"></tbody>
+        </table>
+      </div>
+      <p class="small">Edit inline: change fields & click Save. Delete to remove a bet. All scoped to your user only.</p>
+    </div>
+  </section>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+import { 
+  getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged 
+} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+import {
+  getFirestore, collection, addDoc, getDocs, doc,
+  getDoc, setDoc, updateDoc, deleteDoc,
+  serverTimestamp, query, where
+} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+
+/* --- Your existing Firebase config (shared project, new app) --- */
+const firebaseConfig = {
+  apiKey: "AIzaSyB5rvkKPst6V9-7HoqK1f27jQj6x7f8LiA",
+  authDomain: "trading-journal-da4eb.firebaseapp.com",
+  projectId: "trading-journal-da4eb",
+  storageBucket: "trading-journal-da4eb.firebasestorage.app",
+  messagingSenderId: "50906470929",
+  appId: "1:50906470929:web:b9ad784e9ae86c06d42fb0",
+  measurementId: "G-WR261BKTXL"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+const $ = (id)=>document.getElementById(id);
+
+// Set default date
+if ($("betDate")) $("betDate").value = new Date().toISOString().slice(0,10);
+
+/* ---------- Auth UI ---------- */
+const loginCard = $("loginCard");
+const appCard = $("appCard");
+const loginErr = $("loginErr");
+const addErr = $("addErr");
+const userEmail = $("userEmail");
+
+$("loginBtn").addEventListener("click", async ()=>{
+  loginErr.textContent = "";
+  try {
+    const email = $("email").value.trim();
+    const pass  = $("password").value;
+    await signInWithEmailAndPassword(auth, email, pass);
+  } catch (e) {
+    loginErr.textContent = e.message || "Login failed";
+  }
+});
+
+$("logoutBtn").addEventListener("click", ()=> signOut(auth));
+
+onAuthStateChanged(auth, async (user)=>{
+  if (user) {
+    loginCard.classList.add("hidden");
+    appCard.classList.remove("hidden");
+    userEmail.textContent = user.email || "";
+    await loadBets(user.uid);
+  } else {
+    appCard.classList.add("hidden");
+    loginCard.classList.remove("hidden");
+    userEmail.textContent = "";
+  }
+});
+
+/* ---------- P/L helpers ---------- */
+function computePL(stake, odds, result){
+  stake = Number(stake)||0;
+  odds = Number(odds)||0;
+  if(result === "won")  return (odds - 1) * stake;
+  if(result === "lost") return -stake;
+  return 0; // pending / void
+}
+
+/* ---------- Add Bet ---------- */
+$("addBetBtn").addEventListener("click", async ()=>{
+  addErr.textContent = "";
+  const user = auth.currentUser;
+  if (!user) { addErr.textContent = "Not signed in."; return; }
+
+  const date = $("betDate").value || new Date().toISOString().slice(0,10);
+  const book = $("betBook").value.trim();
+  const event = $("betEvent").value.trim();
+  const selection = $("betSelection").value.trim();
+  const stake = Number($("betStake").value || 0);
+  const odds  = Number($("betOdds").value || 0);
+  const result = $("betResult").value;
+  const notes = $("betNotes").value.trim();
+
+  if (!stake || !odds || !selection) {
+    addErr.textContent = "Stake, odds, and selection are required.";
+    return;
+  }
+
+  const pnl = computePL(stake, odds, result);
+
+  try {
+    await addDoc(collection(db, "betting_trades"), {
+      ownerUid: user.uid,
+      date, book, event, selection,
+      stake, odds, result, pnl,
+      notes,
+      timestamp: serverTimestamp()
+    });
+    // Clear some fields
+    $("betStake").value = "";
+    $("betOdds").value = "";
+    $("betNotes").value = "";
+    await loadBets(user.uid);
+  } catch (e) {
+    addErr.textContent = e.message || "Failed to save bet.";
+  }
+});
+
+/* ---------- Load + render bets ---------- */
+const sumStakeEl = $("sumStake");
+const sumReturnEl = $("sumReturn");
+const sumPLEl = $("sumPL");
+const rowsEl = $("betsRows");
+const filterText = $("filterText");
+const filterStatus = $("filterStatus");
+
+let currentBets = [];
+
+async function loadBets(uid){
+  const qSnap = await getDocs(
+    query(collection(db, "betting_trades"), where("ownerUid", "==", uid))
+  );
+  currentBets = qSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+  renderBets();
+}
+
+function renderBets(){
+  const text = (filterText.value || "").toLowerCase();
+  const status = filterStatus.value;
+
+  let totalStake = 0;
+  let totalReturn = 0;
+  let totalPL = 0;
+
+  rowsEl.innerHTML = "";
+
+  currentBets
+    .sort((a,b)=> (b.date||"").localeCompare(a.date||""))
+    .forEach(bet => {
+      if (status !== "all" && bet.result !== status) return;
+      const blob = `${bet.book||""} ${bet.event||""} ${bet.selection||""}`.toLowerCase();
+      if (text && !blob.includes(text)) return;
+
+      const stake = Number(bet.stake)||0;
+      const odds  = Number(bet.odds)||0;
+      const pnl   = Number(bet.pnl)||0;
+      const impliedReturn = bet.result === "won" ? stake + pnl
+                           : bet.result === "lost" ? 0
+                           : bet.result === "void" ? stake
+                           : 0;
+
+      totalStake += stake;
+      totalReturn += impliedReturn;
+      totalPL += pnl;
+
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td><input type="date" class="edit date" value="${bet.date || ""}"></td>
+        <td><input class="edit book" value="${bet.book || ""}"></td>
+        <td><input class="edit selection" value="${bet.selection || ""}"></td>
+        <td><input type="number" step="0.01" class="edit stake" value="${stake}"></td>
+        <td><input type="number" step="0.01" class="edit odds" value="${odds}"></td>
+        <td>
+          <select class="edit result">
+            <option value="pending" ${bet.result==="pending"?"selected":""}>Pending</option>
+            <option value="won" ${bet.result==="won"?"selected":""}>Won</option>
+            <option value="lost" ${bet.result==="lost"?"selected":""}>Lost</option>
+            <option value="void" ${bet.result==="void"?"selected":""}>Void</option>
+          </select>
+        </td>
+        <td>${pnl.toFixed(2)}</td>
+        <td>
+          <button class="saveBtn secondary" style="margin-bottom:4px;">Save</button>
+          <button class="delBtn danger">Del</button>
+        </td>
+      `;
+
+      // Save handler
+      tr.querySelector(".saveBtn").addEventListener("click", async ()=>{
+        const nd = tr.querySelector(".date").value || bet.date;
+        const nb = tr.querySelector(".book").value;
+        const ns = tr.querySelector(".selection").value;
+        const nStake = Number(tr.querySelector(".stake").value || 0);
+        const nOdds  = Number(tr.querySelector(".odds").value || 0);
+        const nRes   = tr.querySelector(".result").value;
+        const nPL    = computePL(nStake, nOdds, nRes);
+
+        await updateDoc(doc(db, "betting_trades", bet.id), {
+          date: nd,
+          book: nb,
+          selection: ns,
+          stake: nStake,
+          odds: nOdds,
+          result: nRes,
+          pnl: nPL
+        });
+        await loadBets(auth.currentUser.uid);
+      });
+
+      // Delete handler
+      tr.querySelector(".delBtn").addEventListener("click", async ()=>{
+        if (!confirm("Delete this bet?")) return;
+        await deleteDoc(doc(db, "betting_trades", bet.id));
+        await loadBets(auth.currentUser.uid);
+      });
+
+      rowsEl.appendChild(tr);
+    });
+
+  sumStakeEl.textContent = `$${totalStake.toFixed(2)}`;
+  sumReturnEl.textContent = `$${totalReturn.toFixed(2)}`;
+  const sign = totalPL >= 0 ? "" : "-";
+  sumPLEl.textContent = `${sign}$${Math.abs(totalPL).toFixed(2)}`;
+}
+
+filterText.addEventListener("input", renderBets);
+filterStatus.addEventListener("change", renderBets);
+</script>
+</body>
+</html>
