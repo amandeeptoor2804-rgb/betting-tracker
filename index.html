@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Betting Ledger</title>
   <meta name="theme-color" content="#020817" />
+
   <style>
     :root{
       --bg:#020817;
@@ -77,7 +78,6 @@
     }
     .cols-2{grid-template-columns:1fr 1fr;}
     .cols-3{grid-template-columns:repeat(3,1fr);}
-    .cols-4{grid-template-columns:repeat(4,1fr);}
     .right{text-align:right;}
     .summary{
       display:grid;
@@ -131,6 +131,36 @@
       background:#020817;
     }
     .hidden{display:none !important;}
+
+    /* Date tabs row */
+    .tabs-row{
+      display:flex;
+      gap:6px;
+      overflow-x:auto;
+      padding:4px 0;
+      margin-top:4px;
+    }
+    .tab-pill{
+      padding:4px 10px;
+      border-radius:999px;
+      border:1px solid var(--border);
+      font-size:10px;
+      white-space:nowrap;
+      cursor:pointer;
+      color:var(--muted);
+      flex:0 0 auto;
+    }
+    .tab-pill span{
+      font-size:9px;
+      margin-left:4px;
+      color:var(--accent);
+    }
+    .tab-pill.active{
+      background:var(--accent-soft);
+      color:var(--accent);
+      border-color:var(--accent);
+    }
+
     @media (max-width:720px){
       .container{padding:10px;}
       h1{font-size:19px;}
@@ -164,7 +194,7 @@
     <div class="card grid cols-2" style="align-items:center;">
       <div>
         <h2>Betting Dashboard</h2>
-        <div class="small">Pro ledger for your betting trades only.</div>
+        <div class="small">Pro ledger for betting trades only.</div>
       </div>
       <div class="right">
         <div id="userEmail" class="small"></div>
@@ -259,9 +289,14 @@
       <p id="addErr" class="small" style="color:#fca5a5;"></p>
     </div>
 
-    <!-- BETS TABLE (editable) -->
+    <!-- BETS TABLE WITH DATE TABS -->
     <div class="card">
-      <h3>Bets (Inline Editable)</h3>
+      <h3>Bets</h3>
+
+      <!-- Date tabs row -->
+      <div id="dateTabs" class="tabs-row"></div>
+
+      <!-- Filters -->
       <div class="grid cols-2">
         <input id="filterText" placeholder="Filter by event / selection / book" />
         <select id="filterStatus">
@@ -272,6 +307,7 @@
           <option value="void">Void</option>
         </select>
       </div>
+
       <div class="history-wrap">
         <table>
           <thead>
@@ -289,14 +325,14 @@
           <tbody id="betsRows"></tbody>
         </table>
       </div>
-      <p class="small">Tap cells to edit. Save = update; Del = delete. All tied to your account.</p>
+      <p class="small">Use the date pills above to jump by day. Edit inline → Save. Delete removes the bet.</p>
     </div>
 
     <!-- DAILY LEDGER -->
     <div class="card">
       <h3>Daily Ledger</h3>
       <p class="small">
-        Shows daily profit, daily loss, average wins/losses, and running ending balance based on your starting balance.
+        Daily profit & loss, average win/loss, and running ending balance based on your starting balance.
       </p>
       <div class="history-wrap">
         <table>
@@ -330,7 +366,7 @@ import {
   serverTimestamp, query, where
 } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 
-/* --- Firebase config (shared project) --- */
+/* Firebase config (shared project) */
 const firebaseConfig = {
   apiKey: "AIzaSyB5rvkKPst6V9-7HoqK1f27jQj6x7f8LiA",
   authDomain: "trading-journal-da4eb.firebaseapp.com",
@@ -351,8 +387,12 @@ const today = () => new Date().toISOString().slice(0,10);
 
 const state = {
   bets: [],
-  startBalance: 0
+  startBalance: 0,
+  selectedDate: "all"
 };
+
+/* Set default date */
+if ($("betDate")) $("betDate").value = today();
 
 /* ---------- Auth UI ---------- */
 const loginCard = $("loginCard");
@@ -360,8 +400,6 @@ const appCard   = $("appCard");
 const loginErr  = $("loginErr");
 const addErr    = $("addErr");
 const userEmail = $("userEmail");
-
-$("betDate").value = today();
 
 $("loginBtn").addEventListener("click", async () => {
   loginErr.textContent = "";
@@ -408,7 +446,7 @@ async function loadSettings(uid){
     });
   }
   startBalanceInput.value = state.startBalance;
-  renderSummaryAndLedger(); // in case bets already loaded
+  renderSummaryAndLedger();
 }
 
 saveStartBtn.addEventListener("click", async () => {
@@ -425,13 +463,13 @@ saveStartBtn.addEventListener("click", async () => {
   renderSummaryAndLedger();
 });
 
-/* ---------- P/L helper ---------- */
+/* ---------- PL helper ---------- */
 function computePL(stake, odds, result){
   stake = Number(stake)||0;
   odds  = Number(odds)||0;
   if(result === "won")  return (odds - 1) * stake;
   if(result === "lost") return -stake;
-  return 0; // pending / void
+  return 0;
 }
 
 /* ---------- Add Bet ---------- */
@@ -476,17 +514,71 @@ $("addBetBtn").addEventListener("click", async () => {
 });
 
 /* ---------- Load & render bets ---------- */
-const betsRows   = $("betsRows");
-const filterText = $("filterText");
+const betsRows     = $("betsRows");
+const filterText   = $("filterText");
 const filterStatus = $("filterStatus");
+const dateTabs     = $("dateTabs");
 
 async function loadBets(uid){
   const snap = await getDocs(
     query(collection(db, "betting_trades"), where("ownerUid","==",uid))
   );
   state.bets = snap.docs.map(d => ({ id:d.id, ...d.data() }));
+  buildDateTabs();
   renderBets();
   renderSummaryAndLedger();
+}
+
+/* Build date tabs: All + per-date (latest first) */
+function buildDateTabs(){
+  dateTabs.innerHTML = "";
+  const dates = Array.from(
+    new Set(
+      state.bets
+        .map(b => b.date)
+        .filter(Boolean)
+    )
+  ).sort((a,b)=> b.localeCompare(a)); // latest first
+
+  // Ensure selected date is valid
+  if (state.selectedDate !== "all" && !dates.includes(state.selectedDate)) {
+    state.selectedDate = "all";
+  }
+
+  // "All" tab
+  const allTab = document.createElement("div");
+  allTab.className = "tab-pill" + (state.selectedDate==="all"?" active":"");
+  allTab.textContent = "All";
+  allTab.onclick = () => { state.selectedDate="all"; renderBets(); highlightTabs(); };
+  dateTabs.appendChild(allTab);
+
+  dates.forEach(d => {
+    // compute net P/L for that date (for quick glance)
+    const dayPL = state.bets
+      .filter(b => b.date === d)
+      .reduce((s,b)=> s + (Number(b.pnl)||0), 0);
+    const tab = document.createElement("div");
+    tab.className = "tab-pill" + (state.selectedDate===d?" active":"");
+    tab.innerHTML = `${d}<span>${dayPL>=0?"+":"-"}${Math.abs(dayPL).toFixed(0)}</span>`;
+    tab.onclick = () => {
+      state.selectedDate = d;
+      renderBets();
+      highlightTabs();
+    };
+    dateTabs.appendChild(tab);
+  });
+}
+
+function highlightTabs(){
+  const pills = dateTabs.querySelectorAll(".tab-pill");
+  pills.forEach(p => p.classList.remove("active"));
+  pills.forEach(p => {
+    if (p.textContent.trim().startsWith("All") && state.selectedDate==="all") {
+      p.classList.add("active");
+    } else if (state.selectedDate!=="all" && p.textContent.startsWith(state.selectedDate)) {
+      p.classList.add("active");
+    }
+  });
 }
 
 function renderBets(){
@@ -494,7 +586,15 @@ function renderBets(){
   const status = filterStatus.value;
   betsRows.innerHTML = "";
 
-  const betsSorted = [...state.bets].sort((a,b)=>{
+  const filtered = [...state.bets].filter(b => {
+    if (state.selectedDate !== "all" && b.date !== state.selectedDate) return false;
+    if (status !== "all" && b.result !== status) return false;
+    const blob = `${b.book||""} ${b.event||""} ${b.selection||""}`.toLowerCase();
+    if (txt && !blob.includes(txt)) return false;
+    return true;
+  });
+
+  filtered.sort((a,b)=>{
     const da = a.date || "";
     const db = b.date || "";
     if (da === db) {
@@ -503,11 +603,7 @@ function renderBets(){
     return db.localeCompare(da);
   });
 
-  betsSorted.forEach(bet => {
-    if (status !== "all" && bet.result !== status) return;
-    const blob = `${bet.book||""} ${bet.event||""} ${bet.selection||""}`.toLowerCase();
-    if (txt && !blob.includes(txt)) return;
-
+  filtered.forEach(bet => {
     const stake = Number(bet.stake)||0;
     const odds  = Number(bet.odds)||0;
     const pnl   = Number(bet.pnl)||0;
@@ -591,16 +687,14 @@ function renderSummaryAndLedger(){
   let totalLoss = 0;
   let netPL = 0;
 
-  // group by date
   const byDate = {};
+
   bets.forEach(b => {
     const d = b.date || "";
     if (!d) return;
     if (!byDate[d]) byDate[d] = [];
     byDate[d].push(b);
-  });
 
-  bets.forEach(b => {
     const st = Number(b.stake)||0;
     const pl = Number(b.pnl)||0;
     totalStake += st;
@@ -616,9 +710,8 @@ function renderSummaryAndLedger(){
   const currentBalance = (state.startBalance || 0) + netPL;
   sumBalanceEl.textContent = fmt(currentBalance);
 
-  // build ledger rows
   ledgerRows.innerHTML = "";
-  const dates = Object.keys(byDate).sort(); // ascending
+  const dates = Object.keys(byDate).sort(); // ascending for ledger
 
   let runningBalance = state.startBalance || 0;
 
@@ -657,6 +750,7 @@ function renderSummaryAndLedger(){
   });
 }
 
+/* Filters trigger re-render of bets (not ledger) */
 filterText.addEventListener("input", renderBets);
 filterStatus.addEventListener("change", renderBets);
 </script>
