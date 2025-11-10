@@ -79,6 +79,7 @@
     .cols-2{grid-template-columns:1fr 1fr;}
     .cols-3{grid-template-columns:repeat(3,1fr);}
     .right{text-align:right;}
+
     .summary{
       display:grid;
       gap:8px;
@@ -102,6 +103,7 @@
       font-size:17px;
       font-weight:700;
     }
+
     table{
       width:100%;
       border-collapse:collapse;
@@ -112,9 +114,7 @@
       padding:6px;
       border-bottom:1px solid var(--border);
       font-size:10px;
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
+      vertical-align:middle;
     }
     th{
       color:var(--muted);
@@ -125,11 +125,13 @@
       background:var(--card);
       z-index:1;
     }
+    /* Editable inputs inside table */
     td input, td select{
       padding:4px;
       font-size:10px;
       background:#020817;
     }
+
     .hidden{display:none !important;}
 
     /* Date tabs row */
@@ -149,6 +151,7 @@
       cursor:pointer;
       color:var(--muted);
       flex:0 0 auto;
+      background:#020817;
     }
     .tab-pill span{
       font-size:9px;
@@ -161,6 +164,18 @@
       border-color:var(--accent);
     }
 
+    /* Actions cell: show both buttons clearly, stack on mobile */
+    .actions-cell{
+      white-space:normal;
+      overflow:visible;
+    }
+    .actions-cell button{
+      width:100%;
+      margin-bottom:3px;
+      padding:5px;
+      font-size:9px;
+    }
+
     @media (max-width:720px){
       .container{padding:10px;}
       h1{font-size:19px;}
@@ -168,6 +183,7 @@
       h3{font-size:14px;}
       button,input,select,textarea{font-size:13px;padding:9px;}
       th,td{font-size:9px;}
+      .actions-cell button{font-size:9px;padding:5px;}
     }
   </style>
 </head>
@@ -190,7 +206,7 @@
   <!-- APP -->
   <section id="appCard" class="hidden">
 
-    <!-- Header + logout -->
+    <!-- Header -->
     <div class="card grid cols-2" style="align-items:center;">
       <div>
         <h2>Betting Dashboard</h2>
@@ -289,7 +305,7 @@
       <p id="addErr" class="small" style="color:#fca5a5;"></p>
     </div>
 
-    <!-- BETS TABLE WITH DATE TABS -->
+    <!-- BETS + DATE TABS -->
     <div class="card">
       <h3>Bets</h3>
 
@@ -325,14 +341,17 @@
           <tbody id="betsRows"></tbody>
         </table>
       </div>
-      <p class="small">Use the date pills above to jump by day. Edit inline → Save. Delete removes the bet.</p>
+      <p class="small">
+        Use the date pills to jump by day.
+        Inline edit then Save. Delete removes the bet.
+      </p>
     </div>
 
     <!-- DAILY LEDGER -->
     <div class="card">
       <h3>Daily Ledger</h3>
       <p class="small">
-        Daily profit & loss, average win/loss, and running ending balance based on your starting balance.
+        Daily profit/loss, average win/loss, and running ending balance from your starting balance.
       </p>
       <div class="history-wrap">
         <table>
@@ -357,8 +376,8 @@
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
-import { 
-  getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged 
+import {
+  getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
 import {
   getFirestore, collection, addDoc, getDocs, doc,
@@ -366,7 +385,7 @@ import {
   serverTimestamp, query, where
 } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 
-/* Firebase config (shared project) */
+/* Firebase config */
 const firebaseConfig = {
   apiKey: "AIzaSyB5rvkKPst6V9-7HoqK1f27jQj6x7f8LiA",
   authDomain: "trading-journal-da4eb.firebaseapp.com",
@@ -391,10 +410,9 @@ const state = {
   selectedDate: "all"
 };
 
-/* Set default date */
 if ($("betDate")) $("betDate").value = today();
 
-/* ---------- Auth UI ---------- */
+/* --- Auth --- */
 const loginCard = $("loginCard");
 const appCard   = $("appCard");
 const loginErr  = $("loginErr");
@@ -428,7 +446,7 @@ onAuthStateChanged(auth, async (user) => {
   }
 });
 
-/* ---------- Settings: starting balance ---------- */
+/* --- Starting balance --- */
 const startBalanceInput = $("startBalance");
 const saveStartBtn = $("saveStartBalanceBtn");
 
@@ -463,16 +481,16 @@ saveStartBtn.addEventListener("click", async () => {
   renderSummaryAndLedger();
 });
 
-/* ---------- PL helper ---------- */
+/* --- Helpers --- */
 function computePL(stake, odds, result){
   stake = Number(stake)||0;
   odds  = Number(odds)||0;
-  if(result === "won")  return (odds - 1) * stake;
-  if(result === "lost") return -stake;
+  if (result === "won")  return (odds - 1) * stake;
+  if (result === "lost") return -stake;
   return 0;
 }
 
-/* ---------- Add Bet ---------- */
+/* --- Add Bet --- */
 $("addBetBtn").addEventListener("click", async () => {
   addErr.textContent = "";
   const user = auth.currentUser;
@@ -513,7 +531,7 @@ $("addBetBtn").addEventListener("click", async () => {
   }
 });
 
-/* ---------- Load & render bets ---------- */
+/* --- Load bets, build tabs, render --- */
 const betsRows     = $("betsRows");
 const filterText   = $("filterText");
 const filterStatus = $("filterStatus");
@@ -529,23 +547,16 @@ async function loadBets(uid){
   renderSummaryAndLedger();
 }
 
-/* Build date tabs: All + per-date (latest first) */
 function buildDateTabs(){
   dateTabs.innerHTML = "";
   const dates = Array.from(
-    new Set(
-      state.bets
-        .map(b => b.date)
-        .filter(Boolean)
-    )
+    new Set(state.bets.map(b => b.date).filter(Boolean))
   ).sort((a,b)=> b.localeCompare(a)); // latest first
 
-  // Ensure selected date is valid
   if (state.selectedDate !== "all" && !dates.includes(state.selectedDate)) {
     state.selectedDate = "all";
   }
 
-  // "All" tab
   const allTab = document.createElement("div");
   allTab.className = "tab-pill" + (state.selectedDate==="all"?" active":"");
   allTab.textContent = "All";
@@ -553,18 +564,13 @@ function buildDateTabs(){
   dateTabs.appendChild(allTab);
 
   dates.forEach(d => {
-    // compute net P/L for that date (for quick glance)
     const dayPL = state.bets
       .filter(b => b.date === d)
       .reduce((s,b)=> s + (Number(b.pnl)||0), 0);
     const tab = document.createElement("div");
     tab.className = "tab-pill" + (state.selectedDate===d?" active":"");
     tab.innerHTML = `${d}<span>${dayPL>=0?"+":"-"}${Math.abs(dayPL).toFixed(0)}</span>`;
-    tab.onclick = () => {
-      state.selectedDate = d;
-      renderBets();
-      highlightTabs();
-    };
+    tab.onclick = () => { state.selectedDate=d; renderBets(); highlightTabs(); };
     dateTabs.appendChild(tab);
   });
 }
@@ -586,7 +592,7 @@ function renderBets(){
   const status = filterStatus.value;
   betsRows.innerHTML = "";
 
-  const filtered = [...state.bets].filter(b => {
+  const filtered = state.bets.filter(b => {
     if (state.selectedDate !== "all" && b.date !== state.selectedDate) return false;
     if (status !== "all" && b.result !== status) return false;
     const blob = `${b.book||""} ${b.event||""} ${b.selection||""}`.toLowerCase();
@@ -624,9 +630,9 @@ function renderBets(){
         </select>
       </td>
       <td>${pnl.toFixed(2)}</td>
-      <td>
-        <button class="saveBtn secondary" style="margin-bottom:2px;">Save</button>
-        <button class="delBtn danger">Del</button>
+      <td class="actions-cell">
+        <button class="saveBtn secondary">Save</button>
+        <button class="delBtn danger">Delete</button>
       </td>
     `;
 
@@ -671,7 +677,7 @@ function renderBets(){
   });
 }
 
-/* ---------- Summary + Daily Ledger ---------- */
+/* --- Summary + Daily Ledger --- */
 const sumStakeEl   = $("sumStake");
 const sumProfitEl  = $("sumProfit");
 const sumLossEl    = $("sumLoss");
@@ -699,7 +705,7 @@ function renderSummaryAndLedger(){
     const pl = Number(b.pnl)||0;
     totalStake += st;
     if (pl > 0) totalProfit += pl;
-    if (pl < 0) totalLoss += pl; // negative
+    if (pl < 0) totalLoss += pl;
     netPL += pl;
   });
 
@@ -711,7 +717,7 @@ function renderSummaryAndLedger(){
   sumBalanceEl.textContent = fmt(currentBalance);
 
   ledgerRows.innerHTML = "";
-  const dates = Object.keys(byDate).sort(); // ascending for ledger
+  const dates = Object.keys(byDate).sort(); // ascending
 
   let runningBalance = state.startBalance || 0;
 
@@ -728,7 +734,7 @@ function renderSummaryAndLedger(){
       if (pl < 0){ dayLoss += pl;  negCount++; }
     });
 
-    const net = dayProfit + dayLoss; // dayLoss is negative
+    const net = dayProfit + dayLoss; // dayLoss negative
     const avgProfit = posCount ? dayProfit / posCount : 0;
     const avgLoss   = negCount ? Math.abs(dayLoss) / negCount : 0;
 
@@ -750,7 +756,7 @@ function renderSummaryAndLedger(){
   });
 }
 
-/* Filters trigger re-render of bets (not ledger) */
+/* Filters */
 filterText.addEventListener("input", renderBets);
 filterStatus.addEventListener("change", renderBets);
 </script>
