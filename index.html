@@ -169,7 +169,7 @@
       border-color:var(--accent);
     }
 
-    /* Actions cell: big tap targets */
+    /* Actions cell: big mobile-friendly buttons */
     .actions-cell{
       white-space:normal;
       overflow:visible;
@@ -252,6 +252,10 @@
           <div id="sumLoss" class="sum-value">$0.00</div>
         </div>
         <div class="sum-box">
+          <div class="sum-label">Total Withdrawals</div>
+          <div id="sumWithdraw" class="sum-value">$0.00</div>
+        </div>
+        <div class="sum-box">
           <div class="sum-label">Net P/L</div>
           <div id="sumPL" class="sum-value">$0.00</div>
         </div>
@@ -304,9 +308,15 @@
           </select>
         </div>
       </div>
-      <div style="margin-top:6px;">
-        <div class="small">Notes (optional)</div>
-        <textarea id="betNotes" rows="2" placeholder="Reasoning, CLV, etc."></textarea>
+      <div class="grid cols-2" style="margin-top:6px;">
+        <div>
+          <div class="small">Withdrawal (optional)</div>
+          <input id="betWithdrawal" type="number" step="0.01" placeholder="If you withdrew from bankroll" />
+        </div>
+        <div>
+          <div class="small">Notes (optional)</div>
+          <textarea id="betNotes" rows="2" placeholder="Reasoning, CLV, etc."></textarea>
+        </div>
       </div>
       <button id="addBetBtn" style="margin-top:8px;">Save Bet</button>
       <p id="addErr" class="small" style="color:#fca5a5;"></p>
@@ -342,6 +352,7 @@
               <th>Odds</th>
               <th>Result</th>
               <th>P/L</th>
+              <th>Wdr</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -350,6 +361,7 @@
       </div>
       <p class="small">
         Use the date pills to jump by day. Edit inline → Save. Delete removes the bet.
+        Withdrawals reduce balance but are not counted as profit/loss.
       </p>
     </div>
 
@@ -357,7 +369,7 @@
     <div class="card">
       <h3>Daily Ledger</h3>
       <p class="small">
-        Daily profit/loss, average win/loss, and running ending balance from your starting balance.
+        Daily profit/loss, withdrawals, average win/loss, and running ending balance from your starting balance.
       </p>
       <div class="history-wrap">
         <table>
@@ -366,6 +378,7 @@
               <th>Date</th>
               <th>Daily Profit</th>
               <th>Daily Loss</th>
+              <th>Daily Wdr</th>
               <th>Avg Profit</th>
               <th>Avg Loss</th>
               <th>Start Bal</th>
@@ -509,6 +522,7 @@ $("addBetBtn").addEventListener("click", async () => {
   const stake = Number($("betStake").value || 0);
   const odds  = Number($("betOdds").value || 0);
   const result = $("betResult").value;
+  const withdrawal = Number($("betWithdrawal").value || 0);
   const notes = $("betNotes").value.trim();
 
   if (!stake || !odds || !selection) {
@@ -523,12 +537,14 @@ $("addBetBtn").addEventListener("click", async () => {
       ownerUid: user.uid,
       date, book, event, selection,
       stake, odds, result, pnl,
+      withdrawal,
       notes,
       createdAt: serverTimestamp()
     });
 
     $("betStake").value = "";
     $("betOdds").value = "";
+    $("betWithdrawal").value = "";
     $("betNotes").value = "";
 
     await loadBets(user.uid);
@@ -572,7 +588,7 @@ function buildDateTabs(){
   dates.forEach(d => {
     const dayPL = state.bets
       .filter(b => b.date === d)
-      .reduce((s,b)=> s + (Number(b.pnl)||0), 0);
+      .reduce((s,b)=> s + (Number(b.pnl)||0) - (Number(b.withdrawal)||0), 0);
     const tab = document.createElement("div");
     tab.className = "tab-pill" + (state.selectedDate===d?" active":"");
     tab.innerHTML = `${d}<span>${dayPL>=0?"+":"-"}${Math.abs(dayPL).toFixed(0)}</span>`;
@@ -593,6 +609,7 @@ function highlightTabs(){
   });
 }
 
+/* --- Render bets table --- */
 function renderBets(){
   const txt = (filterText.value || "").toLowerCase();
   const status = filterStatus.value;
@@ -619,6 +636,7 @@ function renderBets(){
     const stake = Number(bet.stake)||0;
     const odds  = Number(bet.odds)||0;
     const pnl   = Number(bet.pnl)||0;
+    const wdr   = Number(bet.withdrawal)||0;
 
     const tr = document.createElement("tr");
     tr.innerHTML = `
@@ -636,6 +654,7 @@ function renderBets(){
         </select>
       </td>
       <td>${pnl.toFixed(2)}</td>
+      <td><input type="number" step="0.01" class="edit wdr" value="${wdr || ""}"></td>
       <td class="actions-cell">
         <button class="saveBtn secondary">Save</button>
         <button class="delBtn danger">Delete</button>
@@ -649,6 +668,7 @@ function renderBets(){
       const nStake = Number(tr.querySelector(".stake").value || 0);
       const nOdds  = Number(tr.querySelector(".odds").value || 0);
       const nRes   = tr.querySelector(".result").value;
+      const nWdr   = Number(tr.querySelector(".wdr").value || 0);
       const nPL    = computePL(nStake, nOdds, nRes);
 
       try {
@@ -659,7 +679,8 @@ function renderBets(){
           stake: nStake,
           odds: nOdds,
           result: nRes,
-          pnl: nPL
+          pnl: nPL,
+          withdrawal: nWdr
         });
         await loadBets(auth.currentUser.uid);
       } catch (e) {
@@ -681,13 +702,14 @@ function renderBets(){
   });
 }
 
-/* --- Summary + Daily Ledger --- */
-const sumStakeEl   = $("sumStake");
-const sumProfitEl  = $("sumProfit");
-const sumLossEl    = $("sumLoss");
-const sumPLEl      = $("sumPL");
-const sumBalanceEl = $("sumBalance");
-const ledgerRows   = $("ledgerRows");
+/* --- Summary + Daily Ledger (with withdrawals) --- */
+const sumStakeEl    = $("sumStake");
+const sumProfitEl   = $("sumProfit");
+const sumLossEl     = $("sumLoss");
+const sumWithdrawEl = $("sumWithdraw");
+const sumPLEl       = $("sumPL");
+const sumBalanceEl  = $("sumBalance");
+const ledgerRows    = $("ledgerRows");
 
 function renderSummaryAndLedger(){
   const bets = state.bets;
@@ -695,6 +717,7 @@ function renderSummaryAndLedger(){
   let totalStake = 0;
   let totalProfit = 0;
   let totalLoss = 0;
+  let totalWithdraw = 0;
   let netPL = 0;
 
   const byDate = {};
@@ -707,18 +730,22 @@ function renderSummaryAndLedger(){
 
     const st = Number(b.stake)||0;
     const pl = Number(b.pnl)||0;
+    const w  = Number(b.withdrawal)||0;
+
     totalStake += st;
     if (pl > 0) totalProfit += pl;
     if (pl < 0) totalLoss += pl;
     netPL += pl;
+    totalWithdraw += w;
   });
 
-  sumStakeEl.textContent   = fmt(totalStake);
-  sumProfitEl.textContent  = fmt(totalProfit);
-  sumLossEl.textContent    = fmt(Math.abs(totalLoss));
-  sumPLEl.textContent      = (netPL >= 0 ? "" : "-") + fmt(Math.abs(netPL));
-  const currentBalance = (state.startBalance || 0) + netPL;
-  sumBalanceEl.textContent = fmt(currentBalance);
+  sumStakeEl.textContent    = fmt(totalStake);
+  sumProfitEl.textContent   = fmt(totalProfit);
+  sumLossEl.textContent     = fmt(Math.abs(totalLoss));
+  sumWithdrawEl.textContent = fmt(totalWithdraw);
+  sumPLEl.textContent       = (netPL >= 0 ? "" : "-") + fmt(Math.abs(netPL));
+  const currentBalance = (state.startBalance || 0) + netPL - totalWithdraw;
+  sumBalanceEl.textContent  = fmt(currentBalance);
 
   ledgerRows.innerHTML = "";
   const dates = Object.keys(byDate).sort(); // ascending
@@ -729,16 +756,19 @@ function renderSummaryAndLedger(){
     const list = byDate[d];
     let dayProfit = 0;
     let dayLoss = 0;
+    let dayWithdraw = 0;
     let posCount = 0;
     let negCount = 0;
 
     list.forEach(b => {
       const pl = Number(b.pnl)||0;
+      const w  = Number(b.withdrawal)||0;
       if (pl > 0){ dayProfit += pl; posCount++; }
       if (pl < 0){ dayLoss += pl;  negCount++; }
+      dayWithdraw += w;
     });
 
-    const net = dayProfit + dayLoss;
+    const net = dayProfit + dayLoss - dayWithdraw; // dayLoss negative
     const avgProfit = posCount ? dayProfit / posCount : 0;
     const avgLoss   = negCount ? Math.abs(dayLoss) / negCount : 0;
 
@@ -751,6 +781,7 @@ function renderSummaryAndLedger(){
       <td>${d}</td>
       <td>${dayProfit ? fmt(dayProfit) : "$0.00"}</td>
       <td>${dayLoss ? fmt(Math.abs(dayLoss)) : "$0.00"}</td>
+      <td>${dayWithdraw ? fmt(dayWithdraw) : "$0.00"}</td>
       <td>${avgProfit ? fmt(avgProfit) : "$0.00"}</td>
       <td>${avgLoss ? fmt(avgLoss) : "$0.00"}</td>
       <td>${fmt(startBal)}</td>
