@@ -1,7 +1,7 @@
 {
-  "name": "Bet Tracker",
-  "short_name": "Bets",
-  "start_url": "/betting-tracker/",
+  "name": "Betting Trade Tracker",
+  "short_name": "Bet Tracker",
+  "start_url": "/betting-tracker/index.html",
   "scope": "/betting-tracker/",
   "display": "standalone",
   "background_color": "#0a0f1a",
