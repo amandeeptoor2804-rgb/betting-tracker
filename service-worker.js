@@ -19,12 +19,14 @@ self.addEventListener("activate", (event) => {
 
 self.addEventListener("fetch", (event) => {
   const req = event.request;
+
   if (req.mode === "navigate") {
     event.respondWith(
       fetch(req).catch(() => caches.match("./index.html", { ignoreSearch: true }))
     );
     return;
   }
+
   event.respondWith(
     caches.match(req).then((cached) => cached || fetch(req))
   );
