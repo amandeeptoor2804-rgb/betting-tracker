@@ -43,15 +43,36 @@ button.danger{background:var(--danger);color:#111827;border-color:#b91c1c}
 .feesList{margin-top:8px}
 .feesList .feeItem{border:1px solid var(--border);border-radius:10px;padding:8px;margin-top:6px;background:#0b142f}
 
-/* --- Responsive stacking for phones --- */
-@media (max-width:820px){ .cols-3{grid-template-columns:1fr 1fr} }
-@media (max-width:640px){
-  .cols-2,.cols-3{grid-template-columns:1fr}
-  .rowTop{flex-wrap:wrap;gap:6px}
+/* --- Responsive stacking for tablets & phones --- */
+@media (max-width: 1024px){
+  /* all form grids stack vertically */
+  .cols-2,
+  .cols-3{
+    grid-template-columns:1fr;
+  }
+
+  .rowTop{
+    flex-wrap:wrap;
+    gap:6px;
+  }
+
+  .actions{
+    flex-direction:column;
+  }
+
+  .actions .btn{
+    width:100%;
+  }
+
+  .kv{
+    grid-template-columns:1fr;
+  }
+}
+
+/* Extra tweaks for small phones */
+@media (max-width: 640px){
   .title{font-size:14px}
-  .actions{flex-direction:column}
-  .actions .btn{width:100%}
-  .details .kv{grid-template-columns:1fr}
+  .card{padding:10px}
 }
 </style>
 </head>
