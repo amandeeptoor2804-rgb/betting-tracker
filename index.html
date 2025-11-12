@@ -7,14 +7,20 @@
 <meta name="theme-color" content="#020817" />
 <style>
 :root{--bg:#020817;--card:#0f172a;--border:#1f2937;--fg:#e5e7eb;--muted:#9ca3af;--accent:#22c55e;--accent-soft:#064e3b;--danger:#ef4444}
-*{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--fg);font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial}
 .container{max-width:980px;margin:0 auto;padding:12px}
 .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:12px;margin-top:10px}
-h1,h2,h3{margin:4px 0 8px;font-weight:600} .small{font-size:12px;color:var(--muted)}
+h1,h2,h3{margin:4px 0 8px;font-weight:600}
+.small{font-size:12px;color:var(--muted)}
 button,input,select,textarea{width:100%;padding:10px;border-radius:10px;border:1px solid var(--border);background:#020817;color:var(--fg);font:inherit}
 button{cursor:pointer;font-weight:700;background:var(--accent);color:#022c22;border-color:#16a34a;transition:transform .05s}
-button:active{transform:scale(.98)} button.secondary{background:#111827;color:var(--fg)} button.danger{background:var(--danger);color:#111827;border-color:#b91c1c}
-.grid{display:grid;gap:8px} .cols-2{grid-template-columns:1fr 1fr} .cols-3{grid-template-columns:repeat(3,1fr)}
+button:active{transform:scale(.98)}
+button.secondary{background:#111827;color:var(--fg)}
+button.danger{background:var(--danger);color:#111827;border-color:#b91c1c}
+.grid{display:grid;gap:8px}
+.cols-2{grid-template-columns:1fr 1fr}
+.cols-3{grid-template-columns:repeat(3,1fr)}
 .summary{display:grid;gap:8px;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));margin-top:6px}
 .sum{background:#020817;border:1px solid var(--border);border-radius:12px;padding:8px}
 .sum .lab{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
@@ -26,16 +32,27 @@ button:active{transform:scale(.98)} button.secondary{background:#111827;color:va
 .row{border:1px solid var(--border);border-radius:12px;background:#0b142f;padding:10px}
 .rowTop{display:flex;justify-content:space-between;gap:10px;align-items:center}
 .title{font-weight:700}
-.meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px;font-size:12px;color:var(--muted)}
+.meta{display:flex;flex-wrap:wrap;gap:8px;line-height:1.3;margin-top:6px;font-size:12px;color:var(--muted)}
 .pill{padding:4px 10px;border:1px solid var(--border);border-radius:999px;background:#020817}
-.good{color:#22c55e} .bad{color:#ef4444}
+.good{color:#22c55e}.bad{color:#ef4444}
 .actions{display:flex;gap:6px;margin-top:8px}
 .actions .btn{flex:1;border-radius:999px;padding:10px;font-weight:700}
 .details{margin-top:8px;padding:8px;border:1px dashed var(--border);border-radius:10px;display:none}
 .details.show{display:block}
 .kv{display:grid;grid-template-columns:120px 1fr;gap:6px;margin-top:4px}
-.feesList{margin-top:8px} .feesList .feeItem{border:1px solid var(--border);border-radius:10px;padding:8px;margin-top:6px;background:#0b142f}
-@media(max-width:720px){.container{padding:10px} h1{font-size:19px} h2{font-size:16px}}
+.feesList{margin-top:8px}
+.feesList .feeItem{border:1px solid var(--border);border-radius:10px;padding:8px;margin-top:6px;background:#0b142f}
+
+/* --- Responsive stacking for phones --- */
+@media (max-width:820px){ .cols-3{grid-template-columns:1fr 1fr} }
+@media (max-width:640px){
+  .cols-2,.cols-3{grid-template-columns:1fr}
+  .rowTop{flex-wrap:wrap;gap:6px}
+  .title{font-size:14px}
+  .actions{flex-direction:column}
+  .actions .btn{width:100%}
+  .details .kv{grid-template-columns:1fr}
+}
 </style>
 </head>
 <body>
@@ -175,7 +192,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/fireba
 import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
 import { getFirestore, collection, addDoc, getDocs, doc, getDoc, setDoc, updateDoc, deleteDoc, serverTimestamp, query, where, orderBy } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 
-/* Firebase config (use exactly as provided) */
+/* Firebase config (exact) */
 const firebaseConfig = {
   apiKey: "AIzaSyB5rvkKPst6V9-7HoqK1f27jQj6x7f8LiA",
   authDomain: "trading-journal-da4eb.firebaseapp.com",
@@ -241,38 +258,55 @@ $("saveStart").onclick = async ()=>{
 /* Add Bet */
 $("betSource").onchange = () => $("betSourceCustom").style.display = ($("betSource").value==="__custom")?"block":"none";
 
-$("addBet").onclick = async ()=>{
-  const uid = auth.currentUser.uid;
-  const date        = $("betDate").value || today();
-  const srcSel      = $("betSource").value;
-  const source      = srcSel==="__custom" ? ($("betSourceCustom").value.trim()||"Other") : srcSel;
-  const event       = $("betEvent").value.trim();
-  const selection   = $("betSelection").value.trim();
-  const stake       = Number($("betStake").value||0);
-  const odds        = Number($("betOdds").value||0);
-  const withdrawal  = Number($("betWdr").value||0);
-  const result      = $("betResult").value;
-  const cashReturn  = Number($("betCashReturn").value||0);
-  const feeApplied  = Number($("betFeeApplied").value||0);
-  const notes       = $("betNotes").value.trim();
+$("addBet").onclick = async () => {
+  const user = auth.currentUser;
+  if (!user) { alert("Please sign in again."); return; }
 
-  if (!selection || !stake || !odds){ $("addErr").textContent="Selection, stake and odds are required."; return; }
-  $("addErr").textContent="";
+  const date  = $("betDate").value || today();
+  const srcSel = $("betSource").value;
+  const source = srcSel === "__custom" ? ($("betSourceCustom").value.trim() || "Other") : srcSel;
 
+  const event     = $("betEvent").value.trim();
+  const selection = $("betSelection").value.trim();
+  const stake     = Number($("betStake").value || 0);
+  const odds      = Number($("betOdds").value || 0);
+  const withdrawal= Number($("betWdr").value || 0);
+  const result    = $("betResult").value;
+  const cashReturn= Number($("betCashReturn").value || 0);
+  const feeApplied= Number($("betFeeApplied").value || 0);
+  const notes     = $("betNotes").value.trim();
+
+  if (!event || !selection || !stake || !odds) {
+    alert("Please fill Event, Selection, Stake and Odds.");
+    return;
+  }
+
+  // P/L logic
   let pnl = 0;
-  if (result==="cashed") pnl = cashReturn - stake;
-  else if (result==="won") pnl = (odds - 1) * stake;
-  else if (result==="lost") pnl = -stake;
+  if (result === "cashed") pnl = cashReturn - stake;
+  else if (result === "won") pnl = (odds - 1) * stake;
+  else if (result === "lost") pnl = -stake;
   else pnl = 0;
 
-  await addDoc(collection(db,"betting_trades"),{
-    ownerUid:uid, date, source, event, selection, stake, odds, result, cashReturn, feeApplied,
-    withdrawal, pnl, notes, createdAt:serverTimestamp()
-  });
+  try {
+    await addDoc(collection(db, "betting_trades"), {
+      ownerUid: user.uid,
+      date, source, event, selection,
+      stake, odds, result, cashReturn,
+      withdrawal, feeApplied, pnl,
+      notes,
+      createdAt: serverTimestamp()
+    });
 
-  // clear light
-  ["betStake","betOdds","betWdr","betCashReturn","betFeeApplied","betNotes"].forEach(id=>$(id).value="");
-  await refreshAll();
+    ["betStake","betOdds","betWdr","betCashReturn","betFeeApplied","betNotes"]
+      .forEach(id => $(id).value = "");
+
+    await refreshAll();
+    alert("Saved ✅");
+  } catch (err) {
+    console.error(err);
+    alert("Save failed: " + (err.message || err));
+  }
 };
 
 /* Add Fee (bank) */
@@ -291,14 +325,15 @@ $("addFee").onclick = async ()=>{
 /* Load + render all */
 async function refreshAll(){
   const uid = auth.currentUser.uid;
-  // trades
   const tSnap = await getDocs(query(collection(db,"betting_trades"), where("ownerUid","==",uid)));
-  const bets = tSnap.docs.map(d=>({id:d.id, ...d.data()}));
-  // fees
+  const allBets = tSnap.docs.map(d=>({id:d.id, ...d.data()}));
+
   const fSnap = await getDocs(query(collection(db,"betting_fees"), where("ownerUid","==",uid), orderBy("date","asc")));
   const fees = fSnap.docs.map(d=>({id:d.id, ...d.data()}));
+
+  buildDateTabs(allBets);
   renderFees(fees);
-  renderListAndSummary(bets, fees);
+  renderListAndSummary(allBets, fees);
 }
 
 /* Date tabs + filters + list */
@@ -323,14 +358,18 @@ function renderListAndSummary(allBets, fees){
   // filters
   let bets = [...allBets];
   if (state.selectedDate!=="all") bets = bets.filter(b=>b.date===state.selectedDate);
-  const sf = $("sourceFilter").value; if (sf!=="all") bets = bets.filter(b=> (sf==="__custom" ? (b.source!=="ODDS BREAKER" && b.source!=="SNEWJ PROMPS" && b.source!=="Unknown") : b.source===sf));
+  const sf = $("sourceFilter").value;
+  if (sf!=="all"){
+    bets = bets.filter(b=> sf==="__custom"
+      ? (b.source!=="ODDS BREAKER" && b.source!=="SNEWJ PROMPS" && b.source!=="Unknown")
+      : b.source===sf);
+  }
   const st = $("statusFilter").value; if (st!=="all") bets = bets.filter(b=>b.result===st);
-
-  buildDateTabs(allBets);
 
   // list
   const wrap = $("list"); wrap.innerHTML="";
   bets.sort((a,b)=> (b.date||"").localeCompare(a.date||"") || (b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));
+
   bets.forEach(b=>{
     const pnlAfter = Number(b.pnl||0) - Number(b.feeApplied||0);
     const row = document.createElement("div");
@@ -356,8 +395,7 @@ function renderListAndSummary(allBets, fees){
       </div>
       <div class="details">
         <div class="kv"><div>Date</div><div><input class="i-date" type="date" value="${b.date||''}"></div></div>
-        <div class="kv"><div>Source</div>
-          <div><input class="i-source" value="${b.source||'Unknown'}"></div></div>
+        <div class="kv"><div>Source</div><div><input class="i-source" value="${b.source||'Unknown'}"></div></div>
         <div class="kv"><div>Event</div><div><input class="i-event" value="${b.event||''}"></div></div>
         <div class="kv"><div>Selection</div><div><input class="i-sel" value="${b.selection||''}"></div></div>
         <div class="kv"><div>Stake</div><div><input class="i-stake" type="number" step="0.01" value="${b.stake||0}"></div></div>
