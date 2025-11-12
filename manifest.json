@@ -1,10 +1,10 @@
 {
   "name": "Bet Tracker",
   "short_name": "Bets",
-  "start_url": "./",
-  "scope": "./",
+  "start_url": "/betting-tracker/",
+  "scope": "/betting-tracker/",
   "display": "standalone",
   "background_color": "#0a0f1a",
-  "theme_color": "#111827",
+  "theme_color": "#0a0f1a",
   "icons": []
 }
