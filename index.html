@@ -1,198 +1,42 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Betting Ledger</title>
-  <meta name="theme-color" content="#020817" />
-
-  <style>
-    :root{
-      --bg:#020817;
-      --card:#0f172a;
-      --border:#1f2937;
-      --fg:#e5e7eb;
-      --muted:#9ca3af;
-      --accent:#22c55e;
-      --accent-soft:#064e3b;
-      --danger:#ef4444;
-    }
-    *{box-sizing:border-box;}
-    body{
-      margin:0;
-      padding:0;
-      background:var(--bg);
-      color:var(--fg);
-      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;
-    }
-    .container{
-      max-width:980px;
-      margin:0 auto;
-      padding:12px;
-    }
-    .card{
-      background:var(--card);
-      border:1px solid var(--border);
-      border-radius:14px;
-      padding:12px;
-      margin-top:10px;
-    }
-    h1,h2,h3{
-      margin:4px 0 8px;
-      font-weight:600;
-    }
-    .small{
-      font-size:12px;
-      color:var(--muted);
-    }
-    button,input,select,textarea{
-      width:100%;
-      padding:10px;
-      border-radius:10px;
-      border:1px solid var(--border);
-      background:#020817;
-      color:var(--fg);
-      font-size:14px;
-      font-family:inherit;
-    }
-    button{
-      cursor:pointer;
-      font-weight:600;
-      background:var(--accent);
-      color:#022c22;
-      border-color:#16a34a;
-      transition:transform 0.05s ease, box-shadow 0.05s ease;
-    }
-    button:active{
-      transform:scale(0.97);
-      box-shadow:0 0 0 transparent;
-    }
-    button.secondary{
-      background:#111827;
-      color:var(--fg);
-      border-color:var(--border);
-    }
-    button.danger{
-      background:var(--danger);
-      color:#111827;
-      border-color:#b91c1c;
-    }
-    .grid{
-      display:grid;
-      gap:8px;
-    }
-    .cols-2{grid-template-columns:1fr 1fr;}
-    .cols-3{grid-template-columns:repeat(3,1fr);}
-    .right{text-align:right;}
-
-    .summary{
-      display:grid;
-      gap:8px;
-      grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
-      margin-top:4px;
-    }
-    .sum-box{
-      padding:8px;
-      border-radius:12px;
-      background:#020817;
-      border:1px solid var(--border);
-    }
-    .sum-label{
-      font-size:10px;
-      color:var(--muted);
-      text-transform:uppercase;
-      letter-spacing:.04em;
-    }
-    .sum-value{
-      margin-top:4px;
-      font-size:17px;
-      font-weight:700;
-    }
-
-    table{
-      width:100%;
-      border-collapse:collapse;
-      margin-top:6px;
-      table-layout:fixed;
-    }
-    th,td{
-      padding:6px;
-      border-bottom:1px solid var(--border);
-      font-size:10px;
-      vertical-align:middle;
-    }
-    th{
-      color:var(--muted);
-      font-weight:500;
-      text-align:left;
-      position:sticky;
-      top:0;
-      background:var(--card);
-      z-index:1;
-    }
-
-    td input, td select{
-      padding:4px;
-      font-size:10px;
-      background:#020817;
-    }
-
-    .hidden{display:none !important;}
-
-    /* Date tabs row */
-    .tabs-row{
-      display:flex;
-      gap:6px;
-      overflow-x:auto;
-      padding:4px 0;
-      margin-top:4px;
-    }
-    .tab-pill{
-      padding:6px 12px;
-      border-radius:999px;
-      border:1px solid var(--border);
-      font-size:11px;
-      white-space:nowrap;
-      cursor:pointer;
-      color:var(--muted);
-      flex:0 0 auto;
-      background:#020817;
-    }
-    .tab-pill span{
-      font-size:9px;
-      margin-left:4px;
-      color:var(--accent);
-    }
-    .tab-pill.active{
-      background:var(--accent-soft);
-      color:var(--accent);
-      border-color:var(--accent);
-    }
-
-    /* Actions cell: big mobile-friendly buttons */
-    .actions-cell{
-      white-space:normal;
-      overflow:visible;
-    }
-    .actions-cell button{
-      width:100%;
-      margin-bottom:4px;
-      padding:8px;
-      font-size:11px;
-      border-radius:999px;
-    }
-
-    @media (max-width:720px){
-      .container{padding:10px;}
-      h1{font-size:19px;}
-      h2{font-size:16px;}
-      h3{font-size:14px;}
-      button,input,select,textarea{font-size:13px;padding:9px;}
-      th,td{font-size:9px;}
-      .tab-pill{font-size:10px;padding:5px 10px;}
-      .actions-cell button{font-size:11px;padding:8px;}
-    }
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Betting Ledger</title>
+<meta name="theme-color" content="#020817" />
+<style>
+:root{--bg:#020817;--card:#0f172a;--border:#1f2937;--fg:#e5e7eb;--muted:#9ca3af;--accent:#22c55e;--accent-soft:#064e3b;--danger:#ef4444}
+*{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--fg);font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial}
+.container{max-width:980px;margin:0 auto;padding:12px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:12px;margin-top:10px}
+h1,h2,h3{margin:4px 0 8px;font-weight:600} .small{font-size:12px;color:var(--muted)}
+button,input,select,textarea{width:100%;padding:10px;border-radius:10px;border:1px solid var(--border);background:#020817;color:var(--fg);font:inherit}
+button{cursor:pointer;font-weight:700;background:var(--accent);color:#022c22;border-color:#16a34a;transition:transform .05s}
+button:active{transform:scale(.98)} button.secondary{background:#111827;color:var(--fg)} button.danger{background:var(--danger);color:#111827;border-color:#b91c1c}
+.grid{display:grid;gap:8px} .cols-2{grid-template-columns:1fr 1fr} .cols-3{grid-template-columns:repeat(3,1fr)}
+.summary{display:grid;gap:8px;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));margin-top:6px}
+.sum{background:#020817;border:1px solid var(--border);border-radius:12px;padding:8px}
+.sum .lab{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.sum .val{margin-top:4px;font-size:17px;font-weight:800}
+.tabs{display:flex;gap:6px;overflow-x:auto;padding:4px 0}
+.tab{flex:0 0 auto;padding:6px 12px;border:1px solid var(--border);border-radius:999px;background:#020817;color:var(--muted);font-size:11px;white-space:nowrap;cursor:pointer}
+.tab.active{background:var(--accent-soft);color:var(--accent);border-color:var(--accent)}
+.list{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+.row{border:1px solid var(--border);border-radius:12px;background:#0b142f;padding:10px}
+.rowTop{display:flex;justify-content:space-between;gap:10px;align-items:center}
+.title{font-weight:700}
+.meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px;font-size:12px;color:var(--muted)}
+.pill{padding:4px 10px;border:1px solid var(--border);border-radius:999px;background:#020817}
+.good{color:#22c55e} .bad{color:#ef4444}
+.actions{display:flex;gap:6px;margin-top:8px}
+.actions .btn{flex:1;border-radius:999px;padding:10px;font-weight:700}
+.details{margin-top:8px;padding:8px;border:1px dashed var(--border);border-radius:10px;display:none}
+.details.show{display:block}
+.kv{display:grid;grid-template-columns:120px 1fr;gap:6px;margin-top:4px}
+.feesList{margin-top:8px} .feesList .feeItem{border:1px solid var(--border);border-radius:10px;padding:8px;margin-top:6px;background:#0b142f}
+@media(max-width:720px){.container{padding:10px} h1{font-size:19px} h2{font-size:16px}}
+</style>
 </head>
 <body>
 <div class="container">
@@ -200,10 +44,7 @@
   <!-- LOGIN -->
   <section id="loginCard" class="card">
     <h1>Betting Ledger</h1>
-    <p class="small">
-      Separate from your trading journal & expense tracker.
-      Sign in with the same Firebase email/password.
-    </p>
+    <p class="small">Sign in with the same Firebase email/password. Separate from your trading journal & expense tracker.</p>
     <input id="email" type="email" placeholder="Email" autocomplete="username" />
     <input id="password" type="password" placeholder="Password" autocomplete="current-password" />
     <button id="loginBtn">Login</button>
@@ -211,58 +52,57 @@
   </section>
 
   <!-- APP -->
-  <section id="appCard" class="hidden">
-
-    <!-- Header -->
-    <div class="card grid cols-2" style="align-items:center;">
-      <div>
-        <h2>Betting Dashboard</h2>
-        <div class="small">Pro ledger for betting trades only.</div>
-      </div>
-      <div class="right">
-        <div id="userEmail" class="small"></div>
-        <button id="logoutBtn" class="secondary" style="margin-top:4px;">Logout</button>
-      </div>
+  <section id="appCard" class="card" style="display:none;">
+    <div class="grid cols-2" style="align-items:center">
+      <div><h2>Dashboard</h2><div id="userEmail" class="small"></div></div>
+      <div class="right"><button id="logoutBtn" class="secondary">Logout</button></div>
     </div>
 
-    <!-- Starting balance + summary -->
-    <div class="card">
-      <h3>Account & Summary</h3>
-      <div class="grid cols-2" style="align-items:flex-end;">
-        <div>
-          <div class="small">Starting Balance</div>
+    <!-- SUMMARY -->
+    <div class="summary">
+      <div class="sum"><div class="lab">Total Bets</div><div id="sBets" class="val">0</div></div>
+      <div class="sum"><div class="lab">Hit Rate</div><div id="sHit" class="val">0%</div></div>
+      <div class="sum"><div class="lab">Total Stake</div><div id="sStake" class="val">$0.00</div></div>
+      <div class="sum"><div class="lab">Profit</div><div id="sProfit" class="val">$0.00</div></div>
+      <div class="sum"><div class="lab">Loss</div><div id="sLoss" class="val">$0.00</div></div>
+      <div class="sum"><div class="lab">Net P/L</div><div id="sPL" class="val">$0.00</div></div>
+      <div class="sum"><div class="lab">Withdrawals</div><div id="sWdr" class="val">$0.00</div></div>
+      <div class="sum"><div class="lab">Fees Paid (bank)</div><div id="sFees" class="val">$0.00</div></div>
+      <div class="sum"><div class="lab">Net After Fees</div><div id="sAfterFees" class="val">$0.00</div></div>
+    </div>
+
+    <!-- BALANCES -->
+    <div class="summary" style="margin-top:6px">
+      <div class="sum">
+        <div class="lab">Starting Balance</div>
+        <div class="grid cols-2" style="gap:6px;margin-top:6px">
           <input id="startBalance" type="number" step="0.01" />
-        </div>
-        <div>
-          <button id="saveStartBalanceBtn" class="secondary">Save Starting Balance</button>
+          <button id="saveStart" class="secondary">Save</button>
         </div>
       </div>
+      <div class="sum"><div class="lab">Stake Bankroll</div><div id="sBankroll" class="val">$0.00</div></div>
+      <div class="sum"><div class="lab">Fees Bank Total</div><div id="sFeesBank" class="val">$0.00</div></div>
+    </div>
 
-      <div class="summary">
-        <div class="sum-box">
-          <div class="sum-label">Total Stakes</div>
-          <div id="sumStake" class="sum-value">$0.00</div>
-        </div>
-        <div class="sum-box">
-          <div class="sum-label">Total Profit</div>
-          <div id="sumProfit" class="sum-value">$0.00</div>
-        </div>
-        <div class="sum-box">
-          <div class="sum-label">Total Loss</div>
-          <div id="sumLoss" class="sum-value">$0.00</div>
-        </div>
-        <div class="sum-box">
-          <div class="sum-label">Total Withdrawals</div>
-          <div id="sumWithdraw" class="sum-value">$0.00</div>
-        </div>
-        <div class="sum-box">
-          <div class="sum-label">Net P/L</div>
-          <div id="sumPL" class="sum-value">$0.00</div>
-        </div>
-        <div class="sum-box">
-          <div class="sum-label">Current Balance</div>
-          <div id="sumBalance" class="sum-value">$0.00</div>
-        </div>
+    <!-- FILTER BAR -->
+    <div class="card">
+      <div class="tabs" id="dateTabs"></div>
+      <div class="grid cols-2">
+        <select id="sourceFilter">
+          <option value="all">All Sources</option>
+          <option>ODDS BREAKER</option>
+          <option>SNEWJ PROMPS</option>
+          <option>Unknown</option>
+          <option value="__custom">Other (custom)</option>
+        </select>
+        <select id="statusFilter">
+          <option value="all">All Status</option>
+          <option value="pending">Pending</option>
+          <option value="won">Won</option>
+          <option value="lost">Lost</option>
+          <option value="void">Void</option>
+          <option value="cashed">Cashed</option>
+        </select>
       </div>
     </div>
 
@@ -270,124 +110,61 @@
     <div class="card">
       <h3>Add Bet</h3>
       <div class="grid cols-2">
-        <div>
-          <div class="small">Date</div>
-          <input id="betDate" type="date" />
-        </div>
-        <div>
-          <div class="small">Book / Exchange</div>
-          <input id="betBook" placeholder="e.g. Bet365, Pinnacle" />
-        </div>
-      </div>
-      <div class="grid cols-2" style="margin-top:6px;">
-        <div>
-          <div class="small">Event / Market</div>
-          <input id="betEvent" placeholder="e.g. EPL - Arsenal vs City" />
-        </div>
-        <div>
-          <div class="small">Selection</div>
-          <input id="betSelection" placeholder="e.g. Arsenal ML" />
+        <div><div class="small">Date</div><input id="betDate" type="date" /></div>
+        <div><div class="small">Source</div>
+          <select id="betSource">
+            <option>ODDS BREAKER</option>
+            <option>SNEWJ PROMPS</option>
+            <option>Unknown</option>
+            <option value="__custom">Other (custom)</option>
+          </select>
+          <input id="betSourceCustom" placeholder="Type source…" style="display:none;margin-top:6px">
         </div>
       </div>
-      <div class="grid cols-3" style="margin-top:6px;">
-        <div>
-          <div class="small">Stake</div>
-          <input id="betStake" type="number" step="0.01" />
-        </div>
-        <div>
-          <div class="small">Odds (decimal)</div>
-          <input id="betOdds" type="number" step="0.01" />
-        </div>
-        <div>
-          <div class="small">Result</div>
+      <div class="grid cols-2" style="margin-top:6px">
+        <div><div class="small">Event / Match</div><input id="betEvent" placeholder="e.g., Bulls vs Pistons" /></div>
+        <div><div class="small">Selection</div><input id="betSelection" placeholder="e.g., Pistons ML" /></div>
+      </div>
+      <div class="grid cols-3" style="margin-top:6px">
+        <div><div class="small">Stake</div><input id="betStake" type="number" step="0.01" /></div>
+        <div><div class="small">Odds</div><input id="betOdds" type="number" step="0.01" /></div>
+        <div><div class="small">Withdrawal (optional)</div><input id="betWdr" type="number" step="0.01" /></div>
+      </div>
+      <div class="grid cols-3" style="margin-top:6px">
+        <div><div class="small">Result</div>
           <select id="betResult">
             <option value="pending">Pending</option>
             <option value="won">Won</option>
             <option value="lost">Lost</option>
             <option value="void">Void</option>
+            <option value="cashed">Cashed</option>
           </select>
         </div>
+        <div><div class="small">Cash-out Return</div><input id="betCashReturn" type="number" step="0.01" placeholder="only if Cashed" /></div>
+        <div><div class="small">Fee Applied to this pick</div><input id="betFeeApplied" type="number" step="0.01" placeholder="optional" /></div>
       </div>
-      <div class="grid cols-2" style="margin-top:6px;">
-        <div>
-          <div class="small">Withdrawal (optional)</div>
-          <input id="betWithdrawal" type="number" step="0.01" placeholder="If you withdrew from bankroll" />
-        </div>
-        <div>
-          <div class="small">Notes (optional)</div>
-          <textarea id="betNotes" rows="2" placeholder="Reasoning, CLV, etc."></textarea>
-        </div>
-      </div>
-      <button id="addBetBtn" style="margin-top:8px;">Save Bet</button>
-      <p id="addErr" class="small" style="color:#fca5a5;"></p>
+      <div style="margin-top:6px"><div class="small">Notes</div><textarea id="betNotes" rows="2"></textarea></div>
+      <button id="addBet" style="margin-top:8px">Save Bet</button>
+      <p id="addErr" class="small" style="color:#fca5a5"></p>
     </div>
 
-    <!-- BETS + DATE TABS -->
+    <!-- FEES (BANK) -->
+    <div class="card">
+      <h3>Membership Fees (Paid from BANK)</h3>
+      <div class="grid cols-3">
+        <div><div class="small">Date</div><input id="feeDate" type="date" /></div>
+        <div><div class="small">Amount</div><input id="feeAmount" type="number" step="0.01" /></div>
+        <div><div class="small">Source (optional)</div><input id="feeSource" placeholder="e.g., ODDS BREAKER" /></div>
+      </div>
+      <div style="margin-top:6px"><div class="small">Notes</div><input id="feeNotes" /></div>
+      <button id="addFee" class="secondary" style="margin-top:8px">Add Fee</button>
+      <div class="feesList" id="feesList"></div>
+    </div>
+
+    <!-- LIST -->
     <div class="card">
       <h3>Bets</h3>
-
-      <!-- Date tabs row -->
-      <div id="dateTabs" class="tabs-row"></div>
-
-      <!-- Filters -->
-      <div class="grid cols-2">
-        <input id="filterText" placeholder="Filter by event / selection / book" />
-        <select id="filterStatus">
-          <option value="all">All</option>
-          <option value="pending">Pending</option>
-          <option value="won">Won</option>
-          <option value="lost">Lost</option>
-          <option value="void">Void</option>
-        </select>
-      </div>
-
-      <div class="history-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Book</th>
-              <th>Sel</th>
-              <th>Stake</th>
-              <th>Odds</th>
-              <th>Result</th>
-              <th>P/L</th>
-              <th>Wdr</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody id="betsRows"></tbody>
-        </table>
-      </div>
-      <p class="small">
-        Use the date pills to jump by day. Edit inline → Save. Delete removes the bet.
-        Withdrawals reduce balance but are not counted as profit/loss.
-      </p>
-    </div>
-
-    <!-- DAILY LEDGER -->
-    <div class="card">
-      <h3>Daily Ledger</h3>
-      <p class="small">
-        Daily profit/loss, withdrawals, average win/loss, and running ending balance from your starting balance.
-      </p>
-      <div class="history-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Daily Profit</th>
-              <th>Daily Loss</th>
-              <th>Daily Wdr</th>
-              <th>Avg Profit</th>
-              <th>Avg Loss</th>
-              <th>Start Bal</th>
-              <th>End Bal</th>
-            </tr>
-          </thead>
-          <tbody id="ledgerRows"></tbody>
-        </table>
-      </div>
+      <div id="list" class="list"></div>
     </div>
 
   </section>
@@ -395,16 +172,10 @@
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
-import {
-  getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
-import {
-  getFirestore, collection, addDoc, getDocs, doc,
-  getDoc, setDoc, updateDoc, deleteDoc,
-  serverTimestamp, query, where
-} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+import { getFirestore, collection, addDoc, getDocs, doc, getDoc, setDoc, updateDoc, deleteDoc, serverTimestamp, query, where, orderBy } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 
-/* Firebase config */
+/* Firebase config (use exactly as provided) */
 const firebaseConfig = {
   apiKey: "AIzaSyB5rvkKPst6V9-7HoqK1f27jQj6x7f8LiA",
   authDomain: "trading-journal-da4eb.firebaseapp.com",
@@ -420,380 +191,292 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 
 const $ = id => document.getElementById(id);
-const fmt = n => "$" + (Number(n) || 0).toFixed(2);
+const fmt = n => "$" + (Number(n)||0).toFixed(2);
 const today = () => new Date().toISOString().slice(0,10);
 
-const state = {
-  bets: [],
-  startBalance: 0,
-  selectedDate: "all"
+$("betDate").value = today();
+$("feeDate").value = today();
+
+/* Auth */
+$("loginBtn").onclick = async () => {
+  $("loginErr").textContent = "";
+  try { await signInWithEmailAndPassword(auth, $("email").value.trim(), $("password").value); }
+  catch(e){ $("loginErr").textContent = e.message || "Login failed"; }
+};
+$("logoutBtn").onclick = () => signOut(auth);
+
+onAuthStateChanged(auth, async (user)=>{
+  if (user){
+    $("loginCard").style.display="none";
+    $("appCard").style.display="block";
+    $("userEmail").textContent = user.email || "";
+    await loadSettings();
+    await refreshAll();
+  } else {
+    $("appCard").style.display="none";
+    $("loginCard").style.display="block";
+  }
+});
+
+/* Settings (starting balance) */
+async function loadSettings(){
+  const uid = auth.currentUser.uid;
+  const ref = doc(db,"betting_settings",uid);
+  const snap = await getDoc(ref);
+  if (!snap.exists()){
+    await setDoc(ref,{ownerUid:uid,startingBalance:0,createdAt:serverTimestamp()});
+    $("startBalance").value = 0;
+  } else {
+    $("startBalance").value = Number(snap.data().startingBalance)||0;
+  }
+}
+$("saveStart").onclick = async ()=>{
+  const uid = auth.currentUser.uid;
+  await setDoc(doc(db,"betting_settings",uid),{
+    ownerUid:uid, startingBalance:Number($("startBalance").value||0), updatedAt:serverTimestamp()
+  },{merge:true});
+  await refreshAll();
 };
 
-if ($("betDate")) $("betDate").value = today();
+/* Add Bet */
+$("betSource").onchange = () => $("betSourceCustom").style.display = ($("betSource").value==="__custom")?"block":"none";
 
-/* --- Auth --- */
-const loginCard = $("loginCard");
-const appCard   = $("appCard");
-const loginErr  = $("loginErr");
-const addErr    = $("addErr");
-const userEmail = $("userEmail");
+$("addBet").onclick = async ()=>{
+  const uid = auth.currentUser.uid;
+  const date        = $("betDate").value || today();
+  const srcSel      = $("betSource").value;
+  const source      = srcSel==="__custom" ? ($("betSourceCustom").value.trim()||"Other") : srcSel;
+  const event       = $("betEvent").value.trim();
+  const selection   = $("betSelection").value.trim();
+  const stake       = Number($("betStake").value||0);
+  const odds        = Number($("betOdds").value||0);
+  const withdrawal  = Number($("betWdr").value||0);
+  const result      = $("betResult").value;
+  const cashReturn  = Number($("betCashReturn").value||0);
+  const feeApplied  = Number($("betFeeApplied").value||0);
+  const notes       = $("betNotes").value.trim();
 
-$("loginBtn").addEventListener("click", async () => {
-  loginErr.textContent = "";
-  try {
-    const email = $("email").value.trim();
-    const pass  = $("password").value;
-    await signInWithEmailAndPassword(auth, email, pass);
-  } catch (e) {
-    loginErr.textContent = e.message || "Login failed";
-  }
-});
+  if (!selection || !stake || !odds){ $("addErr").textContent="Selection, stake and odds are required."; return; }
+  $("addErr").textContent="";
 
-$("logoutBtn").addEventListener("click", () => signOut(auth));
+  let pnl = 0;
+  if (result==="cashed") pnl = cashReturn - stake;
+  else if (result==="won") pnl = (odds - 1) * stake;
+  else if (result==="lost") pnl = -stake;
+  else pnl = 0;
 
-onAuthStateChanged(auth, async (user) => {
-  if (user) {
-    loginCard.classList.add("hidden");
-    appCard.classList.remove("hidden");
-    userEmail.textContent = user.email || "";
-    await loadSettings(user.uid);
-    await loadBets(user.uid);
-  } else {
-    appCard.classList.add("hidden");
-    loginCard.classList.remove("hidden");
-    userEmail.textContent = "";
-  }
-});
-
-/* --- Starting balance --- */
-const startBalanceInput = $("startBalance");
-const saveStartBtn = $("saveStartBalanceBtn");
-
-async function loadSettings(uid){
-  const ref = doc(db, "betting_settings", uid);
-  const snap = await getDoc(ref);
-  if (snap.exists()) {
-    state.startBalance = Number(snap.data().startingBalance) || 0;
-  } else {
-    state.startBalance = 0;
-    await setDoc(ref, {
-      ownerUid: uid,
-      startingBalance: 0,
-      createdAt: serverTimestamp()
-    });
-  }
-  startBalanceInput.value = state.startBalance;
-  renderSummaryAndLedger();
-}
-
-saveStartBtn.addEventListener("click", async () => {
-  const user = auth.currentUser;
-  if (!user) return;
-  const val = Number(startBalanceInput.value || 0);
-  state.startBalance = val;
-  const ref = doc(db, "betting_settings", user.uid);
-  await setDoc(ref, {
-    ownerUid: user.uid,
-    startingBalance: val,
-    updatedAt: serverTimestamp()
-  }, { merge: true });
-  renderSummaryAndLedger();
-});
-
-/* --- Helpers --- */
-function computePL(stake, odds, result){
-  stake = Number(stake)||0;
-  odds  = Number(odds)||0;
-  if (result === "won")  return (odds - 1) * stake;
-  if (result === "lost") return -stake;
-  return 0;
-}
-
-/* --- Add Bet --- */
-$("addBetBtn").addEventListener("click", async () => {
-  addErr.textContent = "";
-  const user = auth.currentUser;
-  if (!user) { addErr.textContent = "Not signed in."; return; }
-
-  const date = $("betDate").value || today();
-  const book = $("betBook").value.trim();
-  const event = $("betEvent").value.trim();
-  const selection = $("betSelection").value.trim();
-  const stake = Number($("betStake").value || 0);
-  const odds  = Number($("betOdds").value || 0);
-  const result = $("betResult").value;
-  const withdrawal = Number($("betWithdrawal").value || 0);
-  const notes = $("betNotes").value.trim();
-
-  if (!stake || !odds || !selection) {
-    addErr.textContent = "Stake, odds, and selection are required.";
-    return;
-  }
-
-  const pnl = computePL(stake, odds, result);
-
-  try {
-    await addDoc(collection(db, "betting_trades"), {
-      ownerUid: user.uid,
-      date, book, event, selection,
-      stake, odds, result, pnl,
-      withdrawal,
-      notes,
-      createdAt: serverTimestamp()
-    });
-
-    $("betStake").value = "";
-    $("betOdds").value = "";
-    $("betWithdrawal").value = "";
-    $("betNotes").value = "";
-
-    await loadBets(user.uid);
-  } catch (e) {
-    addErr.textContent = e.message || "Failed to save bet.";
-  }
-});
-
-/* --- Load bets + tabs --- */
-const betsRows     = $("betsRows");
-const filterText   = $("filterText");
-const filterStatus = $("filterStatus");
-const dateTabs     = $("dateTabs");
-
-async function loadBets(uid){
-  const snap = await getDocs(
-    query(collection(db, "betting_trades"), where("ownerUid","==",uid))
-  );
-  state.bets = snap.docs.map(d => ({ id:d.id, ...d.data() }));
-  buildDateTabs();
-  renderBets();
-  renderSummaryAndLedger();
-}
-
-function buildDateTabs(){
-  dateTabs.innerHTML = "";
-  const dates = Array.from(
-    new Set(state.bets.map(b => b.date).filter(Boolean))
-  ).sort((a,b)=> b.localeCompare(a)); // latest first
-
-  if (state.selectedDate !== "all" && !dates.includes(state.selectedDate)) {
-    state.selectedDate = "all";
-  }
-
-  const allTab = document.createElement("div");
-  allTab.className = "tab-pill" + (state.selectedDate==="all"?" active":"");
-  allTab.textContent = "All";
-  allTab.onclick = () => { state.selectedDate="all"; renderBets(); highlightTabs(); };
-  dateTabs.appendChild(allTab);
-
-  dates.forEach(d => {
-    const dayPL = state.bets
-      .filter(b => b.date === d)
-      .reduce((s,b)=> s + (Number(b.pnl)||0) - (Number(b.withdrawal)||0), 0);
-    const tab = document.createElement("div");
-    tab.className = "tab-pill" + (state.selectedDate===d?" active":"");
-    tab.innerHTML = `${d}<span>${dayPL>=0?"+":"-"}${Math.abs(dayPL).toFixed(0)}</span>`;
-    tab.onclick = () => { state.selectedDate=d; renderBets(); highlightTabs(); };
-    dateTabs.appendChild(tab);
-  });
-}
-
-function highlightTabs(){
-  const pills = dateTabs.querySelectorAll(".tab-pill");
-  pills.forEach(p => p.classList.remove("active"));
-  pills.forEach(p => {
-    if (p.textContent.trim().startsWith("All") && state.selectedDate==="all") {
-      p.classList.add("active");
-    } else if (state.selectedDate!=="all" && p.textContent.startsWith(state.selectedDate)) {
-      p.classList.add("active");
-    }
-  });
-}
-
-/* --- Render bets table --- */
-function renderBets(){
-  const txt = (filterText.value || "").toLowerCase();
-  const status = filterStatus.value;
-  betsRows.innerHTML = "";
-
-  const filtered = state.bets.filter(b => {
-    if (state.selectedDate !== "all" && b.date !== state.selectedDate) return false;
-    if (status !== "all" && b.result !== status) return false;
-    const blob = `${b.book||""} ${b.event||""} ${b.selection||""}`.toLowerCase();
-    if (txt && !blob.includes(txt)) return false;
-    return true;
+  await addDoc(collection(db,"betting_trades"),{
+    ownerUid:uid, date, source, event, selection, stake, odds, result, cashReturn, feeApplied,
+    withdrawal, pnl, notes, createdAt:serverTimestamp()
   });
 
-  filtered.sort((a,b)=>{
-    const da = a.date || "";
-    const db = b.date || "";
-    if (da === db) {
-      return (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0);
-    }
-    return db.localeCompare(da);
-  });
+  // clear light
+  ["betStake","betOdds","betWdr","betCashReturn","betFeeApplied","betNotes"].forEach(id=>$(id).value="");
+  await refreshAll();
+};
 
-  filtered.forEach(bet => {
-    const stake = Number(bet.stake)||0;
-    const odds  = Number(bet.odds)||0;
-    const pnl   = Number(bet.pnl)||0;
-    const wdr   = Number(bet.withdrawal)||0;
+/* Add Fee (bank) */
+$("addFee").onclick = async ()=>{
+  const uid = auth.currentUser.uid;
+  const date   = $("feeDate").value || today();
+  const amount = Number($("feeAmount").value||0);
+  if (!amount) return;
+  const source = $("feeSource").value.trim() || null;
+  const notes  = $("feeNotes").value.trim() || null;
+  await addDoc(collection(db,"betting_fees"),{ownerUid:uid,date,amount,source,notes,createdAt:serverTimestamp()});
+  $("feeAmount").value=""; $("feeSource").value=""; $("feeNotes").value="";
+  await refreshAll();
+};
 
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td><input type="date" class="edit date" value="${bet.date || ""}"></td>
-      <td><input class="edit book" value="${bet.book || ""}"></td>
-      <td><input class="edit sel" value="${bet.selection || ""}"></td>
-      <td><input type="number" step="0.01" class="edit stake" value="${stake}"></td>
-      <td><input type="number" step="0.01" class="edit odds" value="${odds}"></td>
-      <td>
-        <select class="edit result">
-          <option value="pending" ${bet.result==="pending"?"selected":""}>Pending</option>
-          <option value="won" ${bet.result==="won"?"selected":""}>Won</option>
-          <option value="lost" ${bet.result==="lost"?"selected":""}>Lost</option>
-          <option value="void" ${bet.result==="void"?"selected":""}>Void</option>
-        </select>
-      </td>
-      <td>${pnl.toFixed(2)}</td>
-      <td><input type="number" step="0.01" class="edit wdr" value="${wdr || ""}"></td>
-      <td class="actions-cell">
-        <button class="saveBtn secondary">Save</button>
-        <button class="delBtn danger">Delete</button>
-      </td>
+/* Load + render all */
+async function refreshAll(){
+  const uid = auth.currentUser.uid;
+  // trades
+  const tSnap = await getDocs(query(collection(db,"betting_trades"), where("ownerUid","==",uid)));
+  const bets = tSnap.docs.map(d=>({id:d.id, ...d.data()}));
+  // fees
+  const fSnap = await getDocs(query(collection(db,"betting_fees"), where("ownerUid","==",uid), orderBy("date","asc")));
+  const fees = fSnap.docs.map(d=>({id:d.id, ...d.data()}));
+  renderFees(fees);
+  renderListAndSummary(bets, fees);
+}
+
+/* Date tabs + filters + list */
+const state = { selectedDate:"all" };
+["statusFilter","sourceFilter"].forEach(id=>$(id).onchange=()=>refreshAll());
+
+function buildDateTabs(bets){
+  const tabs = $("dateTabs"); tabs.innerHTML="";
+  const dates = Array.from(new Set(bets.map(b=>b.date).filter(Boolean))).sort((a,b)=>b.localeCompare(a));
+  const mk = (label,val) => {
+    const el = document.createElement("div");
+    el.className = "tab" + (state.selectedDate===val?" active":"");
+    el.textContent = label;
+    el.onclick = ()=>{ state.selectedDate = val; refreshAll(); };
+    tabs.appendChild(el);
+  };
+  mk("All","all");
+  dates.forEach(d=>mk(d,d));
+}
+
+function renderListAndSummary(allBets, fees){
+  // filters
+  let bets = [...allBets];
+  if (state.selectedDate!=="all") bets = bets.filter(b=>b.date===state.selectedDate);
+  const sf = $("sourceFilter").value; if (sf!=="all") bets = bets.filter(b=> (sf==="__custom" ? (b.source!=="ODDS BREAKER" && b.source!=="SNEWJ PROMPS" && b.source!=="Unknown") : b.source===sf));
+  const st = $("statusFilter").value; if (st!=="all") bets = bets.filter(b=>b.result===st);
+
+  buildDateTabs(allBets);
+
+  // list
+  const wrap = $("list"); wrap.innerHTML="";
+  bets.sort((a,b)=> (b.date||"").localeCompare(a.date||"") || (b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));
+  bets.forEach(b=>{
+    const pnlAfter = Number(b.pnl||0) - Number(b.feeApplied||0);
+    const row = document.createElement("div");
+    row.className="row";
+    row.innerHTML = `
+      <div class="rowTop">
+        <div class="title">${b.event || "—"} — <span>${b.selection||""}</span></div>
+        <div class="pill">${b.source||"Unknown"}</div>
+      </div>
+      <div class="meta">
+        <span>Odds: <b>${Number(b.odds||0).toFixed(2)}</b></span>
+        <span>Stake: <b>${fmt(b.stake)}</b></span>
+        <span>P/L: <b class="${(b.pnl||0)>=0?'good':'bad'}">${fmt(b.pnl)}</b></span>
+        <span>Fee: <b>${fmt(b.feeApplied||0)}</b></span>
+        <span>After Fees: <b class="${pnlAfter>=0?'good':'bad'}">${fmt(pnlAfter)}</b></span>
+        <span>Status: <b>${b.result}</b>${b.result==='cashed' ? ` (Return ${fmt(b.cashReturn||0)})` : ''}</span>
+        ${b.withdrawal? `<span>Withdrawal: <b>${fmt(b.withdrawal)}</b></span>`:''}
+      </div>
+      <div class="actions">
+        <button class="btn secondary">Details</button>
+        <button class="btn" data-act="save">Save</button>
+        <button class="btn danger" data-act="del">Delete</button>
+      </div>
+      <div class="details">
+        <div class="kv"><div>Date</div><div><input class="i-date" type="date" value="${b.date||''}"></div></div>
+        <div class="kv"><div>Source</div>
+          <div><input class="i-source" value="${b.source||'Unknown'}"></div></div>
+        <div class="kv"><div>Event</div><div><input class="i-event" value="${b.event||''}"></div></div>
+        <div class="kv"><div>Selection</div><div><input class="i-sel" value="${b.selection||''}"></div></div>
+        <div class="kv"><div>Stake</div><div><input class="i-stake" type="number" step="0.01" value="${b.stake||0}"></div></div>
+        <div class="kv"><div>Odds</div><div><input class="i-odds" type="number" step="0.01" value="${b.odds||0}"></div></div>
+        <div class="kv"><div>Result</div>
+          <div>
+            <select class="i-res">
+              <option value="pending" ${b.result==='pending'?'selected':''}>Pending</option>
+              <option value="won" ${b.result==='won'?'selected':''}>Won</option>
+              <option value="lost" ${b.result==='lost'?'selected':''}>Lost</option>
+              <option value="void" ${b.result==='void'?'selected':''}>Void</option>
+              <option value="cashed" ${b.result==='cashed'?'selected':''}>Cashed</option>
+            </select>
+          </div>
+        </div>
+        <div class="kv"><div>Cash-out Return</div><div><input class="i-ret" type="number" step="0.01" value="${b.cashReturn||0}"></div></div>
+        <div class="kv"><div>Fee Applied</div><div><input class="i-fee" type="number" step="0.01" value="${b.feeApplied||0}"></div></div>
+        <div class="kv"><div>Withdrawal</div><div><input class="i-wdr" type="number" step="0.01" value="${b.withdrawal||0}"></div></div>
+        <div class="kv"><div>Notes</div><div><textarea class="i-notes" rows="2">${b.notes||''}</textarea></div></div>
+      </div>
     `;
+    const details = row.querySelector(".details");
+    row.querySelector(".secondary").onclick = ()=> details.classList.toggle("show");
+    row.querySelector("[data-act='del']").onclick = async ()=>{
+      if (!confirm("Delete bet?")) return;
+      await deleteDoc(doc(db,"betting_trades",b.id)); refreshAll();
+    };
+    row.querySelector("[data-act='save']").onclick = async ()=>{
+      const nd   = row.querySelector(".i-date").value || b.date;
+      const nsrc = row.querySelector(".i-source").value || "Unknown";
+      const nev  = row.querySelector(".i-event").value;
+      const nsel = row.querySelector(".i-sel").value;
+      const nst  = Number(row.querySelector(".i-stake").value||0);
+      const nods = Number(row.querySelector(".i-odds").value||0);
+      const nres = row.querySelector(".i-res").value;
+      const nret = Number(row.querySelector(".i-ret").value||0);
+      const nfee = Number(row.querySelector(".i-fee").value||0);
+      const nwdr = Number(row.querySelector(".i-wdr").value||0);
+      const nnotes = row.querySelector(".i-notes").value;
 
-    tr.querySelector(".saveBtn").addEventListener("click", async () => {
-      const nd = tr.querySelector(".date").value || bet.date;
-      const nb = tr.querySelector(".book").value;
-      const ns = tr.querySelector(".sel").value;
-      const nStake = Number(tr.querySelector(".stake").value || 0);
-      const nOdds  = Number(tr.querySelector(".odds").value || 0);
-      const nRes   = tr.querySelector(".result").value;
-      const nWdr   = Number(tr.querySelector(".wdr").value || 0);
-      const nPL    = computePL(nStake, nOdds, nRes);
+      let npl = 0;
+      if (nres==="cashed") npl = nret - nst;
+      else if (nres==="won") npl = (nods - 1) * nst;
+      else if (nres==="lost") npl = -nst;
+      else npl = 0;
 
-      try {
-        await updateDoc(doc(db, "betting_trades", bet.id), {
-          date: nd,
-          book: nb,
-          selection: ns,
-          stake: nStake,
-          odds: nOdds,
-          result: nRes,
-          pnl: nPL,
-          withdrawal: nWdr
-        });
-        await loadBets(auth.currentUser.uid);
-      } catch (e) {
-        alert("Update failed: " + (e.message || e));
-      }
-    });
+      await updateDoc(doc(db,"betting_trades",b.id),{
+        date:nd, source:nsrc, event:nev, selection:nsel, stake:nst, odds:nods,
+        result:nres, cashReturn:nret, feeApplied:nfee, withdrawal:nwdr, pnl:npl, notes:nnotes
+      });
+      refreshAll();
+    };
 
-    tr.querySelector(".delBtn").addEventListener("click", async () => {
-      if (!confirm("Delete this bet?")) return;
-      try {
-        await deleteDoc(doc(db, "betting_trades", bet.id));
-        await loadBets(auth.currentUser.uid);
-      } catch (e) {
-        alert("Delete failed: " + (e.message || e));
-      }
-    });
-
-    betsRows.appendChild(tr);
+    wrap.appendChild(row);
   });
+
+  // summary
+  const totals = bets.reduce((a,b)=>{
+    const pl = Number(b.pnl||0);
+    a.bets++;
+    a.stake += Number(b.stake||0);
+    if (pl>0){ a.profit += pl; a.wins++; }
+    if (pl<0){ a.loss   += pl; a.losses++; }
+    a.pl += pl;
+    a.withdraw += Number(b.withdrawal||0);
+    a.feeApplied += Number(b.feeApplied||0);
+    return a;
+  },{bets:0, stake:0, profit:0, loss:0, pl:0, withdraw:0, feeApplied:0, wins:0, losses:0});
+
+  const feesBank = fees.reduce((s,f)=> s + Number(f.amount||0), 0);
+
+  const startBal = Number($("startBalance").value||0);
+  const bankroll = startBal + totals.pl - totals.withdraw; // fees don't touch bankroll
+  const afterFees = totals.pl - (feesBank + totals.feeApplied);
+  const hitRate = totals.bets ? Math.round((totals.wins / totals.bets)*100) : 0;
+
+  $("sBets").textContent = String(totals.bets);
+  $("sHit").textContent  = hitRate + "%";
+  $("sStake").textContent= fmt(totals.stake);
+  $("sProfit").textContent= fmt(totals.profit);
+  $("sLoss").textContent  = fmt(Math.abs(totals.loss));
+  $("sPL").textContent    = fmt(totals.pl);
+  $("sWdr").textContent   = fmt(totals.withdraw);
+  $("sFees").textContent  = fmt(feesBank + totals.feeApplied);
+  $("sAfterFees").textContent = fmt(afterFees);
+  $("sBankroll").textContent = fmt(bankroll);
+  $("sFeesBank").textContent = fmt(feesBank);
 }
 
-/* --- Summary + Daily Ledger (with withdrawals) --- */
-const sumStakeEl    = $("sumStake");
-const sumProfitEl   = $("sumProfit");
-const sumLossEl     = $("sumLoss");
-const sumWithdrawEl = $("sumWithdraw");
-const sumPLEl       = $("sumPL");
-const sumBalanceEl  = $("sumBalance");
-const ledgerRows    = $("ledgerRows");
-
-function renderSummaryAndLedger(){
-  const bets = state.bets;
-
-  let totalStake = 0;
-  let totalProfit = 0;
-  let totalLoss = 0;
-  let totalWithdraw = 0;
-  let netPL = 0;
-
-  const byDate = {};
-
-  bets.forEach(b => {
-    const d = b.date || "";
-    if (!d) return;
-    if (!byDate[d]) byDate[d] = [];
-    byDate[d].push(b);
-
-    const st = Number(b.stake)||0;
-    const pl = Number(b.pnl)||0;
-    const w  = Number(b.withdrawal)||0;
-
-    totalStake += st;
-    if (pl > 0) totalProfit += pl;
-    if (pl < 0) totalLoss += pl;
-    netPL += pl;
-    totalWithdraw += w;
-  });
-
-  sumStakeEl.textContent    = fmt(totalStake);
-  sumProfitEl.textContent   = fmt(totalProfit);
-  sumLossEl.textContent     = fmt(Math.abs(totalLoss));
-  sumWithdrawEl.textContent = fmt(totalWithdraw);
-  sumPLEl.textContent       = (netPL >= 0 ? "" : "-") + fmt(Math.abs(netPL));
-  const currentBalance = (state.startBalance || 0) + netPL - totalWithdraw;
-  sumBalanceEl.textContent  = fmt(currentBalance);
-
-  ledgerRows.innerHTML = "";
-  const dates = Object.keys(byDate).sort(); // ascending
-
-  let runningBalance = state.startBalance || 0;
-
-  dates.forEach(d => {
-    const list = byDate[d];
-    let dayProfit = 0;
-    let dayLoss = 0;
-    let dayWithdraw = 0;
-    let posCount = 0;
-    let negCount = 0;
-
-    list.forEach(b => {
-      const pl = Number(b.pnl)||0;
-      const w  = Number(b.withdrawal)||0;
-      if (pl > 0){ dayProfit += pl; posCount++; }
-      if (pl < 0){ dayLoss += pl;  negCount++; }
-      dayWithdraw += w;
-    });
-
-    const net = dayProfit + dayLoss - dayWithdraw; // dayLoss negative
-    const avgProfit = posCount ? dayProfit / posCount : 0;
-    const avgLoss   = negCount ? Math.abs(dayLoss) / negCount : 0;
-
-    const startBal = runningBalance;
-    const endBal   = startBal + net;
-    runningBalance = endBal;
-
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td>${d}</td>
-      <td>${dayProfit ? fmt(dayProfit) : "$0.00"}</td>
-      <td>${dayLoss ? fmt(Math.abs(dayLoss)) : "$0.00"}</td>
-      <td>${dayWithdraw ? fmt(dayWithdraw) : "$0.00"}</td>
-      <td>${avgProfit ? fmt(avgProfit) : "$0.00"}</td>
-      <td>${avgLoss ? fmt(avgLoss) : "$0.00"}</td>
-      <td>${fmt(startBal)}</td>
-      <td>${fmt(endBal)}</td>
+/* Fees render list */
+function renderFees(fees){
+  const box = $("feesList"); box.innerHTML="";
+  fees.sort((a,b)=> (a.date||"").localeCompare(b.date||""));
+  fees.forEach(f=>{
+    const div = document.createElement("div");
+    div.className="feeItem";
+    div.innerHTML = `
+      <div class="meta"><b>${f.date}</b> · ${fmt(f.amount)} ${f.source?('· '+f.source):''}</div>
+      ${f.notes? `<div class="small" style="margin-top:4px">${f.notes}</div>`:''}
+      <div class="actions" style="margin-top:6px">
+        <button class="btn secondary" data-a="edit">Edit</button>
+        <button class="btn danger" data-a="del">Delete</button>
+      </div>
     `;
-    ledgerRows.appendChild(tr);
+    div.querySelector("[data-a='del']").onclick = async ()=>{
+      if (!confirm("Delete fee?")) return;
+      await deleteDoc(doc(db,"betting_fees",f.id)); refreshAll();
+    };
+    div.querySelector("[data-a='edit']").onclick = async ()=>{
+      const nd = prompt("Date (YYYY-MM-DD)", f.date) || f.date;
+      const na = Number(prompt("Amount", f.amount) || f.amount);
+      const ns = prompt("Source (optional)", f.source||"") || null;
+      const nn = prompt("Notes (optional)", f.notes||"") || null;
+      await updateDoc(doc(db,"betting_fees",f.id),{date:nd,amount:na,source:ns,notes:nn});
+      refreshAll();
+    };
+    box.appendChild(div);
   });
 }
-
-/* Filters */
-filterText.addEventListener("input", renderBets);
-filterStatus.addEventListener("change", renderBets);
 </script>
 </body>
 </html>
