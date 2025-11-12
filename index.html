@@ -4,18 +4,24 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Bet Tracker</title>
-  <link rel="manifest" href="manifest.json">
-<script>
-  if ("serviceWorker" in navigator) {
-    window.addEventListener("load", () => {
-      navigator.serviceWorker.register("/service-worker.js").catch(console.error);
-    });
-  }
-</script>
+
+  <!-- PWA manifest -->
+  <link rel="manifest" href="./manifest.json" />
+
+  <!-- Register service worker for PWA / offline -->
+  <script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("./service-worker.js")
+          .catch(err => console.log("SW register error", err));
+      });
+    }
+  </script>
+
   <style>
     body {
       margin: 0;
-      font-family: "Poppins", sans-serif;
+      font-family: "Poppins", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
       background-color: #0a0f1a;
       color: #e5e9f0;
     }
@@ -53,24 +59,31 @@
       border-radius: 10px;
       margin-bottom: 0.5rem;
       flex-wrap: wrap;
+      gap: 0.5rem;
     }
     .bet-info {
       flex: 1;
       min-width: 180px;
+      font-size: 0.9rem;
+    }
+    .bet-info .bet-title {
+      font-weight: 600;
     }
     .bet-stats {
       flex: 1;
       min-width: 180px;
-      font-size: 0.9rem;
+      font-size: 0.85rem;
+      line-height: 1.4;
     }
     .tab {
       background: #1f2937;
       color: #9ca3af;
       border: none;
-      border-radius: 10px;
-      padding: 0.5rem 0.8rem;
+      border-radius: 999px;
+      padding: 0.4rem 0.9rem;
       margin: 0.2rem;
       cursor: pointer;
+      font-size: 0.85rem;
     }
     .tab.active {
       background: #2563eb;
@@ -91,10 +104,14 @@
       border-radius: 12px;
       padding: 1rem;
     }
+    .section h3 {
+      margin-top: 0;
+      font-size: 1rem;
+    }
     label {
       display: block;
       margin-top: 0.5rem;
-      font-size: 0.9rem;
+      font-size: 0.85rem;
     }
     input, select {
       width: 100%;
@@ -104,6 +121,18 @@
       margin-top: 0.2rem;
       background: #1f2937;
       color: #e5e9f0;
+      font-size: 0.9rem;
+    }
+    input::placeholder {
+      color: #6b7280;
+    }
+    .fee {
+      font-size: 0.85rem;
+      padding: 0.4rem 0;
+      border-bottom: 1px solid #1f2937;
+    }
+    .fee:last-child {
+      border-bottom: none;
     }
     @media (max-width: 768px) {
       .bet {
@@ -112,11 +141,14 @@
       }
       .bet-stats, .bet-info {
         width: 100%;
-        margin-top: 0.5rem;
       }
       #dateTabs {
-        flex-direction: column;
-        align-items: stretch;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        justify-content: flex-start;
+      }
+      #dateTabs::-webkit-scrollbar {
+        display: none;
       }
     }
   </style>
@@ -131,7 +163,13 @@
 
     <div id="summary" class="section">
       <h3>📈 Daily Summary</h3>
-      <p>Total Profit/Loss: <strong>$<span id="dailyProfit">0.00</span></strong></p>
+      <p style="margin:0 0 0.3rem 0;">
+        Total Profit/Loss for selected day:
+        <strong>$<span id="dailyProfit">0.00</span></strong>
+      </p>
+      <p style="margin:0;font-size:0.85rem;color:#9ca3af;">
+        Use the date chips below to switch days.
+      </p>
     </div>
 
     <div id="dateTabs"></div>
@@ -140,6 +178,7 @@
 
     <div class="section">
       <h3>Add New Bet</h3>
+
       <label>Date</label>
       <input type="date" id="betDate" />
 
@@ -155,69 +194,88 @@
       <label>Odds</label>
       <input type="number" id="odds" placeholder="e.g. 1.72" step="0.01" />
 
+      <!-- Optional: manual profit/loss override later if you want -->
+
       <button id="saveBetBtn" class="btn" style="margin-top:1rem;width:100%;">Save Bet</button>
     </div>
 
     <div class="section">
-      <h3>Membership Fees (Paid from Bank)</h3>
+      <h3>Membership Fees (Paid from BANK)</h3>
       <div id="feesList"></div>
     </div>
   </main>
 
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
     import {
       getFirestore, collection, addDoc, getDocs, deleteDoc, doc,
       query, where, orderBy
-    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
     import {
       getAuth, onAuthStateChanged, signOut
-    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
 
+    // 🔐 Your real Firebase config (same project as trading journal)
     const firebaseConfig = {
-      apiKey: "YOUR_KEY",
-      authDomain: "YOUR_PROJECT.firebaseapp.com",
-      projectId: "YOUR_PROJECT",
-      storageBucket: "YOUR_PROJECT.appspot.com",
-      messagingSenderId: "XXXXXXX",
-      appId: "YOUR_APP_ID"
+      apiKey: "AIzaSyB5rvkKPst6V9-7HoqK1f27jQj6x7f8LiA",
+      authDomain: "trading-journal-da4eb.firebaseapp.com",
+      projectId: "trading-journal-da4eb",
+      storageBucket: "trading-journal-da4eb.firebasestorage.app",
+      messagingSenderId: "50906470929",
+      appId: "1:50906470929:web:b9ad784e9ae86c06d42fb0",
+      measurementId: "G-WR261BKTXL"
     };
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     const auth = getAuth(app);
 
-    const $ = id => document.getElementById(id);
+    const $  = id => document.getElementById(id);
     const fmt = n => Number(n || 0).toFixed(2);
     const today = () => new Date().toISOString().slice(0, 10);
 
     let currentAllBets = [];
-    let currentFees = [];
+    let currentFees    = [];
     const state = { selectedDate: "all" };
 
+    // 👤 Auth – assumes you're already logged in on this origin.
     onAuthStateChanged(auth, user => {
-      if (!user) window.location.href = "login.html";
-      else refreshAll();
+      if (!user) {
+        // If you ever add a dedicated login page for this app, change the URL here.
+        console.log("Not signed in – open your trading-journal app to log in.");
+      } else {
+        refreshAll();
+      }
     });
 
     $("logoutBtn").onclick = () => signOut(auth);
 
     async function refreshAll() {
-      const uid = auth.currentUser.uid;
+      const user = auth.currentUser;
+      if (!user) return;
+
+      const uid = user.uid;
 
       const tSnap = await getDocs(
-        query(collection(db, "betting_trades"), where("ownerUid", "==", uid))
+        query(
+          collection(db, "betting_trades"),
+          where("ownerUid", "==", uid)
+        )
       );
       currentAllBets = tSnap.docs.map(d => ({ id: d.id, ...d.data() }));
 
       const fSnap = await getDocs(
-        query(collection(db, "betting_fees"), where("ownerUid", "==", uid), orderBy("date", "asc"))
+        query(
+          collection(db, "betting_fees"),
+          where("ownerUid", "==", uid),
+          orderBy("date", "asc")
+        )
       );
       currentFees = fSnap.docs.map(d => ({ id: d.id, ...d.data() }));
 
       buildDateTabs(currentAllBets);
       renderFees(currentFees);
-      renderListAndSummary(currentAllBets, currentFees);
+      renderListAndSummary(currentAllBets);
     }
 
     function buildDateTabs(allBets) {
@@ -228,46 +286,51 @@
         if (!d) return;
         counts[d] = (counts[d] || 0) + 1;
       });
+
       const dates = Object.keys(counts).sort((a, b) => b.localeCompare(a));
       if (state.selectedDate !== "all" && !counts[state.selectedDate]) {
         state.selectedDate = "all";
       }
 
       tabs.innerHTML = "";
-      const make = (label, value, count) => {
+
+      const makeTab = (label, value, count) => {
         const el = document.createElement("button");
         el.className = "tab" + (state.selectedDate === value ? " active" : "");
         el.textContent = count != null ? `${label} · ${count}` : label;
         el.onclick = () => {
           state.selectedDate = value;
-          renderListAndSummary(currentAllBets, currentFees);
+          renderListAndSummary(currentAllBets);
         };
         tabs.appendChild(el);
       };
 
-      make("All", "all", allBets.length);
-      dates.forEach(d => make(d, d, counts[d]));
+      makeTab("All", "all", allBets.length);
+      dates.forEach(d => makeTab(d, d, counts[d]));
     }
 
-    function renderListAndSummary(allBets, fees) {
+    function renderListAndSummary(allBets) {
       const list = $("betsList");
       let bets = [...allBets];
+
       if (state.selectedDate !== "all") {
-        bets = bets.filter(b => (b.date || "").slice(0, 10) === state.selectedDate);
+        bets = bets.filter(
+          b => (b.date || "").slice(0, 10) === state.selectedDate
+        );
       }
 
       list.innerHTML = bets.map(b => `
         <div class="bet">
           <div class="bet-info">
-            <span class="bet-title">${b.match || "Unnamed Match"}</span><br>
-            <small>${b.source || "N/A"} | ${b.date || ""}</small>
+            <span class="bet-title">${b.match || "Unnamed Match"}</span><br />
+            <small>${b.source || "N/A"} • ${(b.date || "").slice(0,10)}</small>
           </div>
           <div class="bet-stats">
-            <span>Stake: $${fmt(b.stake)}</span><br>
-            <span>Odds: ${b.odds}</span><br>
-            <span>P/L: ${fmt(b.profitLoss)}</span>
+            <div>Stake: $${fmt(b.stake)}</div>
+            <div>Odds: ${b.odds}</div>
+            <div>P/L: $${fmt(b.profitLoss)}</div>
           </div>
-          <button class="btn del" onclick="deleteBet('${b.id}')">Delete</button>
+          <button class="btn del" onclick="window._deleteBet('${b.id}')">Delete</button>
         </div>
       `).join("");
 
@@ -275,19 +338,32 @@
       $("dailyProfit").textContent = fmt(profit);
     }
 
-    window.deleteBet = async (id) => {
+    // Expose delete for inline onclick
+    window._deleteBet = async (id) => {
       await deleteDoc(doc(db, "betting_trades", id));
       refreshAll();
     };
 
     $("saveBetBtn").onclick = async () => {
-      const uid = auth.currentUser.uid;
-      const date = $("betDate").value || today();
-      const match = $("match").value;
-      const source = $("source").value;
-      const stake = Number($("stake").value || 0);
-      const odds = Number($("odds").value || 0);
-      const profitLoss = stake * (odds - 1);
+      const user = auth.currentUser;
+      if (!user) {
+        alert("You need to be logged in first.");
+        return;
+      }
+
+      const uid    = user.uid;
+      const date   = $("betDate").value || today();
+      const match  = $("match").value.trim();
+      const source = $("source").value.trim();
+      const stake  = Number($("stake").value || 0);
+      const odds   = Number($("odds").value || 0);
+
+      if (!match || stake <= 0 || odds <= 1) {
+        alert("Enter match, stake (>0) and odds (>1).");
+        return;
+      }
+
+      const profitLoss = stake * (odds - 1); // simple win/lose estimate
 
       await addDoc(collection(db, "betting_trades"), {
         ownerUid: uid,
@@ -298,13 +374,21 @@
         odds,
         profitLoss
       });
+
+      // reset some fields
+      $("match").value  = "";
+      $("source").value = "";
+      $("stake").value  = "";
+      $("odds").value   = "";
+
       refreshAll();
     };
 
     function renderFees(fees) {
       $("feesList").innerHTML = fees.map(f => `
         <div class="fee">
-          <strong>${f.date}</strong> – $${fmt(f.amount)}
+          <strong>${(f.date || "").slice(0,10)}</strong> – $${fmt(f.amount)}
+          ${f.source ? ` <span style="color:#9ca3af;">(${f.source})</span>` : ""}
         </div>
       `).join("");
     }
