@@ -23,7 +23,11 @@ body{
   color:var(--fg);
   font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;
 }
-.container{max-width:980px;margin:0 auto;padding:12px}
+.container{
+  max-width:980px;
+  margin:0 auto;
+  padding:12px;
+}
 .card{
   background:var(--card);
   border:1px solid var(--border);
@@ -31,8 +35,14 @@ body{
   padding:12px;
   margin-top:10px;
 }
-h1,h2,h3{margin:4px 0 8px;font-weight:600}
-.small{font-size:12px;color:var(--muted)}
+h1,h2,h3{
+  margin:4px 0 8px;
+  font-weight:600;
+}
+.small{
+  font-size:12px;
+  color:var(--muted);
+}
 button,input,select,textarea{
   width:100%;
   padding:10px;
@@ -51,8 +61,15 @@ button{
   transition:transform .05s;
 }
 button:active{transform:scale(.98)}
-button.secondary{background:#111827;color:var(--fg)}
-button.danger{background:var(--danger);color:#111827;border-color:#b91c1c}
+button.secondary{
+  background:#111827;
+  color:var(--fg);
+}
+button.danger{
+  background:var(--danger);
+  color:#111827;
+  border-color:#b91c1c;
+}
 .grid{display:grid;gap:8px}
 .cols-2{grid-template-columns:1fr 1fr}
 .cols-3{grid-template-columns:repeat(3,1fr)}
@@ -170,40 +187,18 @@ button.danger{background:var(--danger);color:#111827;border-color:#b91c1c}
   margin-top:6px;
   background:#0b142f;
 }
-.adjList{margin-top:8px}
-.adjItem{
-  border:1px solid var(--border);
-  border-radius:10px;
-  padding:8px;
-  margin-top:6px;
-  background:#020817;
-}
 
-/* --- Responsive stacking for tablets & phones --- */
-@media (max-width: 1024px){
-  .cols-2,
-  .cols-3{
-    grid-template-columns:1fr;
-  }
-  .rowTop{
-    flex-wrap:wrap;
-    gap:6px;
-  }
-  .actions{
-    flex-direction:column;
-  }
-  .actions .btn{
-    width:100%;
-  }
-  .kv{
-    grid-template-columns:1fr;
-  }
+/* --- Responsive stacking for phones --- */
+@media (max-width:820px){
+  .cols-3{grid-template-columns:1fr 1fr}
 }
-
-/* Extra tweaks for small phones */
-@media (max-width: 640px){
+@media (max-width:640px){
+  .cols-2,.cols-3{grid-template-columns:1fr}
+  .rowTop{flex-wrap:wrap;gap:6px}
   .title{font-size:14px}
-  .card{padding:10px}
+  .actions{flex-direction:column}
+  .actions .btn{width:100%}
+  .details .kv{grid-template-columns:1fr}
 }
 </style>
 </head>
@@ -213,10 +208,13 @@ button.danger{background:var(--danger);color:#111827;border-color:#b91c1c}
   <!-- LOGIN -->
   <section id="loginCard" class="card">
     <h1>Betting Ledger</h1>
-    <p class="small">Sign in with the same Firebase email/password. Separate from your trading journal & expense tracker.</p>
+    <p class="small">
+      Sign in with the same Firebase email/password.
+      Separate from your trading journal &amp; expense tracker.
+    </p>
     <input id="email" type="email" placeholder="Email" autocomplete="username" />
     <input id="password" type="password" placeholder="Password" autocomplete="current-password" />
-    <button id="loginBtn" type="button">Login</button>
+    <button id="loginBtn">Login</button>
     <p id="loginErr" class="small" style="color:#fca5a5;"></p>
   </section>
 
@@ -227,7 +225,9 @@ button.danger{background:var(--danger);color:#111827;border-color:#b91c1c}
         <h2>Dashboard</h2>
         <div id="userEmail" class="small"></div>
       </div>
-      <div class="right"><button id="logoutBtn" class="secondary">Logout</button></div>
+      <div class="right">
+        <button id="logoutBtn" class="secondary">Logout</button>
+      </div>
     </div>
 
     <!-- SUMMARY -->
@@ -238,57 +238,28 @@ button.danger{background:var(--danger);color:#111827;border-color:#b91c1c}
       <div class="sum"><div class="lab">Profit</div><div id="sProfit" class="val">$0.00</div></div>
       <div class="sum"><div class="lab">Loss</div><div id="sLoss" class="val">$0.00</div></div>
       <div class="sum"><div class="lab">Net P/L</div><div id="sPL" class="val">$0.00</div></div>
-      <div class="sum"><div class="lab">Withdrawals (per bets)</div><div id="sWdr" class="val">$0.00</div></div>
+      <div class="sum"><div class="lab">Withdrawals</div><div id="sWdr" class="val">$0.00</div></div>
       <div class="sum"><div class="lab">Fees Paid (bank)</div><div id="sFees" class="val">$0.00</div></div>
-      <div class="sum"><div class="lab">Net After All Fees</div><div id="sAfterFees" class="val">$0.00</div></div>
+      <div class="sum"><div class="lab">Net After Fees</div><div id="sAfterFees" class="val">$0.00</div></div>
     </div>
+
+    <!-- Scope + source summary -->
+    <p id="scopeSummary" class="small" style="margin-top:4px;">
+      Showing <strong>All dates</strong>, <strong>all sources</strong>, all statuses.
+    </p>
+    <p id="sourcePL" class="small" style="margin-top:2px;"></p>
 
     <!-- BALANCES -->
     <div class="summary" style="margin-top:6px">
       <div class="sum">
-        <div class="lab">Starting Balance (Stake)</div>
+        <div class="lab">Starting Balance</div>
         <div class="grid cols-2" style="gap:6px;margin-top:6px">
           <input id="startBalance" type="number" step="0.01" />
           <button id="saveStart" class="secondary">Save</button>
         </div>
-        <p class="small" style="margin-top:4px">
-          Example: put your current Stake account balance here (e.g., 1310). This is your baseline without ongoing trades.
-        </p>
       </div>
-      <div class="sum"><div class="lab">Stake Bankroll (live)</div><div id="sBankroll" class="val">$0.00</div></div>
+      <div class="sum"><div class="lab">Stake Bankroll</div><div id="sBankroll" class="val">$0.00</div></div>
       <div class="sum"><div class="lab">Fees Bank Total</div><div id="sFeesBank" class="val">$0.00</div></div>
-    </div>
-
-    <!-- BANKROLL ADJUSTMENTS (NEW) -->
-    <div class="card">
-      <h3>Bankroll Adjustments (Deposits / Withdrawals)</h3>
-      <p class="small">
-        Use this when you send money <b>into</b> Stake (Deposit) or <b>take money out</b> from Stake to bank (Withdrawal).
-        This directly adjusts the Stake bankroll. Membership fees below stay in your original bank, not stake.
-      </p>
-      <div class="grid cols-3">
-        <div>
-          <div class="small">Date</div>
-          <input id="adjDate" type="date" />
-        </div>
-        <div>
-          <div class="small">Type</div>
-          <select id="adjType">
-            <option value="deposit">Deposit into Stake</option>
-            <option value="withdrawal">Withdrawal from Stake</option>
-          </select>
-        </div>
-        <div>
-          <div class="small">Amount</div>
-          <input id="adjAmount" type="number" step="0.01" />
-        </div>
-      </div>
-      <div style="margin-top:6px">
-        <div class="small">Notes (optional)</div>
-        <input id="adjNotes" />
-      </div>
-      <button id="addAdj" class="secondary" style="margin-top:8px">Add Adjustment</button>
-      <div id="adjList" class="adjList"></div>
     </div>
 
     <!-- FILTER BAR -->
@@ -313,13 +284,6 @@ button.danger{background:var(--danger);color:#111827;border-color:#b91c1c}
       </div>
     </div>
 
-    <!-- SOURCE SUMMARY (per selected date) -->
-    <div class="card">
-      <h3>Source Summary (by selected date)</h3>
-      <p class="small">Uses the current date tab and status filter. Shows P/L per source.</p>
-      <div id="sourceSummary" class="summary"></div>
-    </div>
-
     <!-- ADD BET -->
     <div class="card">
       <h3>Add Bet</h3>
@@ -336,7 +300,7 @@ button.danger{background:var(--danger);color:#111827;border-color:#b91c1c}
             <option>Unknown</option>
             <option value="__custom">Other (custom)</option>
           </select>
-          <input id="betSourceCustom" placeholder="Type source…" style="display:none;margin-top:6px" />
+          <input id="betSourceCustom" placeholder="Type source…" style="display:none;margin-top:6px">
         </div>
       </div>
       <div class="grid cols-2" style="margin-top:6px">
@@ -460,90 +424,86 @@ const firebaseConfig = {
   measurementId: "G-WR261BKTXL"
 };
 
-const app = initializeApp(firebaseConfig);
+const app  = initializeApp(firebaseConfig);
 const auth = getAuth(app);
-const db = getFirestore(app);
+const db   = getFirestore(app);
 
-const $  = id => document.getElementById(id);
-const fmt = n => "$" + (Number(n) || 0).toFixed(2);
+const $   = id => document.getElementById(id);
+const fmt = n => "$" + (Number(n)||0).toFixed(2);
 const today = () => new Date().toISOString().slice(0,10);
 
 $("betDate").value = today();
 $("feeDate").value = today();
-$("adjDate").value = today();
 
-/* -------- AUTH -------- */
-async function handleLogin() {
-  const email = $("email").value.trim();
-  const pw    = $("password").value;
+/* ---------------- AUTH ---------------- */
+$("loginBtn").onclick = async () => {
   $("loginErr").textContent = "";
-
-  if (!email || !pw) {
-    $("loginErr").textContent = "Please enter email and password.";
-    return;
-  }
-
   try {
-    await signInWithEmailAndPassword(auth, email, pw);
-  } catch (e) {
-    console.error(e);
+    await signInWithEmailAndPassword(
+      auth,
+      $("email").value.trim(),
+      $("password").value
+    );
+  } catch(e){
     $("loginErr").textContent = e.message || "Login failed";
   }
-}
-
-const loginBtn = $("loginBtn");
-if (loginBtn) {
-  loginBtn.addEventListener("click", handleLogin);
-}
-
+};
 $("logoutBtn").onclick = () => signOut(auth);
 
-onAuthStateChanged(auth, async (user) => {
-  if (user) {
+onAuthStateChanged(auth, async user => {
+  if (user){
     $("loginCard").style.display = "none";
-    $("appCard").style.display = "block";
-    $("userEmail").textContent = user.email || "";
+    $("appCard").style.display   = "block";
+    $("userEmail").textContent   = user.email || "";
     await loadSettings();
     await refreshAll();
   } else {
-    $("appCard").style.display = "none";
+    $("appCard").style.display   = "none";
     $("loginCard").style.display = "block";
   }
 });
 
-/* -------- SETTINGS (STARTING BALANCE) -------- */
+/* -------- Settings (starting balance) -------- */
 async function loadSettings(){
   const uid = auth.currentUser.uid;
   const ref = doc(db,"betting_settings",uid);
   const snap = await getDoc(ref);
   if (!snap.exists()){
-    await setDoc(ref,{ownerUid:uid,startingBalance:0,createdAt:serverTimestamp()});
+    await setDoc(ref,{
+      ownerUid:uid,
+      startingBalance:0,
+      createdAt:serverTimestamp()
+    });
     $("startBalance").value = 0;
   } else {
     $("startBalance").value = Number(snap.data().startingBalance)||0;
   }
 }
-$("saveStart").onclick = async ()=>{
+$("saveStart").onclick = async () => {
   const uid = auth.currentUser.uid;
-  await setDoc(doc(db,"betting_settings",uid),{
-    ownerUid:uid,
-    startingBalance:Number($("startBalance").value||0),
-    updatedAt:serverTimestamp()
-  },{merge:true});
+  await setDoc(
+    doc(db,"betting_settings",uid),
+    {
+      ownerUid:uid,
+      startingBalance:Number($("startBalance").value||0),
+      updatedAt:serverTimestamp()
+    },
+    {merge:true}
+  );
   await refreshAll();
 };
 
-/* -------- ADD BET -------- */
+/* ------------ Add Bet ------------- */
 $("betSource").onchange = () => {
   $("betSourceCustom").style.display =
-    ($("betSource").value==="__custom") ? "block" : "none";
+    $("betSource").value === "__custom" ? "block" : "none";
 };
 
 $("addBet").onclick = async () => {
   const user = auth.currentUser;
   if (!user) { alert("Please sign in again."); return; }
 
-  const date  = $("betDate").value || today();
+  const date   = $("betDate").value || today();
   const srcSel = $("betSource").value;
   const source = srcSel === "__custom"
     ? ($("betSourceCustom").value.trim() || "Other")
@@ -564,25 +524,32 @@ $("addBet").onclick = async () => {
     return;
   }
 
-  // P/L logic
   let pnl = 0;
-  if (result === "cashed")      pnl = cashReturn - stake;
-  else if (result === "won")    pnl = (odds - 1) * stake;
-  else if (result === "lost")   pnl = -stake;
-  else                          pnl = 0;
+  if (result === "cashed") pnl = cashReturn - stake;
+  else if (result === "won") pnl = (odds - 1) * stake;
+  else if (result === "lost") pnl = -stake;
+  else pnl = 0;
 
   try {
     await addDoc(collection(db, "betting_trades"), {
       ownerUid: user.uid,
-      date, source, event, selection,
-      stake, odds, result, cashReturn,
-      withdrawal, feeApplied, pnl,
+      date,
+      source,
+      event,
+      selection,
+      stake,
+      odds,
+      result,
+      cashReturn,
+      withdrawal,
+      feeApplied,
+      pnl,
       notes,
       createdAt: serverTimestamp()
     });
 
-    ["betStake","betOdds","betWdr","betCashReturn",
-     "betFeeApplied","betNotes"].forEach(id => $(id).value = "");
+    ["betStake","betOdds","betWdr","betCashReturn","betFeeApplied","betNotes"]
+      .forEach(id => $(id).value = "");
 
     await refreshAll();
     alert("Saved ✅");
@@ -592,8 +559,8 @@ $("addBet").onclick = async () => {
   }
 };
 
-/* -------- ADD FEE (BANK) -------- */
-$("addFee").onclick = async ()=>{
+/* ------------ Add Fee (bank) ------------- */
+$("addFee").onclick = async () => {
   const uid = auth.currentUser.uid;
   const date   = $("feeDate").value || today();
   const amount = Number($("feeAmount").value||0);
@@ -602,7 +569,12 @@ $("addFee").onclick = async ()=>{
   const notes  = $("feeNotes").value.trim() || null;
 
   await addDoc(collection(db,"betting_fees"),{
-    ownerUid:uid,date,amount,source,notes,createdAt:serverTimestamp()
+    ownerUid:uid,
+    date,
+    amount,
+    source,
+    notes,
+    createdAt:serverTimestamp()
   });
 
   $("feeAmount").value="";
@@ -611,163 +583,124 @@ $("addFee").onclick = async ()=>{
   await refreshAll();
 };
 
-/* -------- ADD BANKROLL ADJUSTMENT (DEPOSIT/WITHDRAWAL) -------- */
-$("addAdj").onclick = async ()=>{
-  const uid    = auth.currentUser.uid;
-  const date   = $("adjDate").value || today();
-  const type   = $("adjType").value; // deposit | withdrawal
-  const amount = Number($("adjAmount").value||0);
-  const notes  = $("adjNotes").value.trim() || null;
-  if (!amount) return;
+/* ---------- Load + render all ---------- */
+const state = { selectedDate:"all" };
 
-  await addDoc(collection(db,"betting_bankroll"),{
-    ownerUid:uid,date,type,amount,notes,createdAt:serverTimestamp()
-  });
+["statusFilter","sourceFilter"].forEach(id => {
+  $(id).onchange = () => refreshAll();
+});
 
-  $("adjAmount").value="";
-  $("adjNotes").value="";
-  await refreshAll();
-};
-
-/* -------- MAIN REFRESH -------- */
 async function refreshAll(){
   const uid = auth.currentUser.uid;
+
+  // Load bets
   const tSnap = await getDocs(
     query(collection(db,"betting_trades"), where("ownerUid","==",uid))
   );
-  const allBets = tSnap.docs.map(d=>({id:d.id, ...d.data()}));
 
+  // NORMALISE old + new docs so your history still works
+  const allBets = tSnap.docs.map(d => {
+    const data = d.data();
+    // derive pnl if missing
+    let pnl = data.pnl;
+    if (pnl === undefined) {
+      if (data.profitLoss !== undefined) pnl = data.profitLoss;
+      else {
+        const stake = Number(data.stake || 0);
+        const odds  = Number(data.odds || 0);
+        pnl = (odds - 1) * stake; // fallback
+      }
+    }
+    // guess result for very old docs
+    let result = data.result;
+    if (!result) {
+      if (pnl > 0) result = "won";
+      else if (pnl < 0) result = "lost";
+      else result = "pending";
+    }
+    return {
+      id: d.id,
+      ...data,
+      event: data.event ?? data.match ?? "",
+      selection: data.selection ?? data.pick ?? "",
+      pnl,
+      result
+    };
+  });
+
+  // Load fees
   const fSnap = await getDocs(
     query(collection(db,"betting_fees"),
       where("ownerUid","==",uid),
       orderBy("date","asc"))
   );
-  const fees = fSnap.docs.map(d=>({id:d.id, ...d.data()}));
-
-  const aSnap = await getDocs(
-    query(collection(db,"betting_bankroll"),
-      where("ownerUid","==",uid),
-      orderBy("date","asc"))
-  );
-  const adjustments = aSnap.docs.map(d=>({id:d.id, ...d.data()}));
+  const fees = fSnap.docs.map(d => ({id:d.id, ...d.data()}));
 
   buildDateTabs(allBets);
   renderFees(fees);
-  renderAdjustments(adjustments);
-  renderListAndSummary(allBets, fees, adjustments);
+  renderListAndSummary(allBets, fees);
 }
 
-/* -------- FILTERS & DATE TABS -------- */
-const state = { selectedDate:"all" };
-
-["statusFilter","sourceFilter"].forEach(id=>{
-  $(id).onchange = () => refreshAll();
-});
-
+/* ---------- Date tabs ---------- */
 function buildDateTabs(bets){
   const tabs = $("dateTabs");
   tabs.innerHTML = "";
-  const dates = Array.from(
-    new Set(bets.map(b=>b.date).filter(Boolean))
-  ).sort((a,b)=>b.localeCompare(a));
+  const dates = Array.from(new Set(bets.map(b=>b.date).filter(Boolean)))
+    .sort((a,b)=>b.localeCompare(a));
 
-  const mk = (label,val) => {
+  const make = (label,val) => {
     const el = document.createElement("div");
     el.className = "tab" + (state.selectedDate===val?" active":"");
     el.textContent = label;
-    el.onclick = ()=>{ state.selectedDate = val; refreshAll(); };
+    el.onclick = () => { state.selectedDate = val; refreshAll(); };
     tabs.appendChild(el);
   };
-  mk("All","all");
-  dates.forEach(d=>mk(d,d));
+  make("All","all");
+  dates.forEach(d => make(d,d));
 }
 
-/* -------- SOURCE SUMMARY (by date + status) -------- */
-function updateSourceSummary(allBets){
-  const box = $("sourceSummary");
-  if (!box) return;
-
-  // base: current date tab + status filter, ignore sourceFilter
-  let base = [...allBets];
-  if (state.selectedDate !== "all") {
-    base = base.filter(b => b.date === state.selectedDate);
-  }
-  const st = $("statusFilter").value;
-  if (st !== "all") {
-    base = base.filter(b => b.result === st);
-  }
-
-  if (!base.length){
-    box.innerHTML = '<div class="small">No bets for this selection yet.</div>';
-    return;
-  }
-
-  // group by source
-  const map = {};
-  base.forEach(b=>{
-    const key = b.source || "Unknown";
-    if (!map[key]) map[key] = {profit:0, loss:0, pl:0, count:0};
-    const pl = Number(b.pnl || 0);
-    map[key].pl += pl;
-    map[key].count++;
-    if (pl > 0) map[key].profit += pl;
-    if (pl < 0) map[key].loss   += pl;
-  });
-
-  const keys = Object.keys(map).sort();
-  box.innerHTML = keys.map(k=>{
-    const m = map[k];
-    return `
-      <div class="sum">
-        <div class="lab">${k}</div>
-        <div class="val">${fmt(m.pl)}</div>
-        <div class="small">
-          Profit: ${fmt(m.profit)}
-          · Loss: ${fmt(Math.abs(m.loss))}
-          · Bets: ${m.count}
-        </div>
-      </div>
-    `;
-  }).join("");
-}
-
-/* -------- RENDER BETS + GLOBAL SUMMARY -------- */
-function renderListAndSummary(allBets, fees, adjustments){
-  // filters for bet LIST + top summary
+/* ---------- List + summary ---------- */
+function renderListAndSummary(allBets, fees){
+  // filters
   let bets = [...allBets];
 
-  if (state.selectedDate!=="all") {
-    bets = bets.filter(b=>b.date===state.selectedDate);
+  // For scope & source view we also need set of bets filtered only by date
+  let dateFiltered = [...allBets];
+  if (state.selectedDate !== "all") {
+    bets         = bets.filter(b => b.date === state.selectedDate);
+    dateFiltered = dateFiltered.filter(b => b.date === state.selectedDate);
   }
 
   const sf = $("sourceFilter").value;
-  if (sf!=="all"){
-    bets = bets.filter(b=> sf==="__custom"
-      ? (b.source!=="ODDS BREAKER" &&
-         b.source!=="SNEWJ PROMPS" &&
-         b.source!=="Unknown")
-      : b.source===sf);
+  if (sf !== "all"){
+    const matchSrc = b => (
+      sf === "__custom"
+        ? (b.source!=="ODDS BREAKER" && b.source!=="SNEWJ PROMPS" && b.source!=="Unknown")
+        : b.source === sf
+    );
+    bets = bets.filter(matchSrc);
   }
 
   const st = $("statusFilter").value;
-  if (st!=="all") bets = bets.filter(b=>b.result===st);
+  if (st !== "all") bets = bets.filter(b => b.result === st);
 
-  // ----- list -----
+  // LIST
   const wrap = $("list");
   wrap.innerHTML = "";
-  bets.sort((a,b)=>
+
+  bets.sort((a,b) =>
     (b.date||"").localeCompare(a.date||"") ||
-    (b.createdAt?.seconds||0)-(a.createdAt?.seconds||0)
+    (b.createdAt?.seconds||0) - (a.createdAt?.seconds||0)
   );
 
-  bets.forEach(b=>{
+  bets.forEach(b => {
     const pnlAfter = Number(b.pnl||0) - Number(b.feeApplied||0);
     const row = document.createElement("div");
-    row.className="row";
+    row.className = "row";
     row.innerHTML = `
       <div class="rowTop">
         <div class="title">${b.event || "—"} — <span>${b.selection||""}</span></div>
-        <div class="pill">${b.source||"Unknown"}</div>
+        <div class="pill">${b.source || "Unknown"}</div>
       </div>
       <div class="meta">
         <span>Odds: <b>${Number(b.odds||0).toFixed(2)}</b></span>
@@ -775,9 +708,8 @@ function renderListAndSummary(allBets, fees, adjustments){
         <span>P/L: <b class="${(b.pnl||0)>=0?'good':'bad'}">${fmt(b.pnl)}</b></span>
         <span>Fee: <b>${fmt(b.feeApplied||0)}</b></span>
         <span>After Fees: <b class="${pnlAfter>=0?'good':'bad'}">${fmt(pnlAfter)}</b></span>
-        <span>Status: <b>${b.result}</b>${b.result==='cashed'
-          ? ` (Return ${fmt(b.cashReturn||0)})` : ''}</span>
-        ${b.withdrawal? `<span>Withdrawal: <b>${fmt(b.withdrawal)}</b></span>`:''}
+        <span>Status: <b>${b.result}</b>${b.result==='cashed' ? ` (Return ${fmt(b.cashReturn||0)})` : ""}</span>
+        ${b.withdrawal ? `<span>Withdrawal: <b>${fmt(b.withdrawal)}</b></span>` : ""}
       </div>
       <div class="actions">
         <button class="btn secondary">Details</button>
@@ -785,42 +717,39 @@ function renderListAndSummary(allBets, fees, adjustments){
         <button class="btn danger" data-act="del">Delete</button>
       </div>
       <div class="details">
-        <div class="kv"><div>Date</div><div><input class="i-date" type="date" value="${b.date||''}"></div></div>
-        <div class="kv"><div>Source</div><div><input class="i-source" value="${b.source||'Unknown'}"></div></div>
-        <div class="kv"><div>Event</div><div><input class="i-event" value="${b.event||''}"></div></div>
-        <div class="kv"><div>Selection</div><div><input class="i-sel" value="${b.selection||''}"></div></div>
+        <div class="kv"><div>Date</div><div><input class="i-date" type="date" value="${b.date||""}"></div></div>
+        <div class="kv"><div>Source</div><div><input class="i-source" value="${b.source||"Unknown"}"></div></div>
+        <div class="kv"><div>Event</div><div><input class="i-event" value="${b.event||""}"></div></div>
+        <div class="kv"><div>Selection</div><div><input class="i-sel" value="${b.selection||""}"></div></div>
         <div class="kv"><div>Stake</div><div><input class="i-stake" type="number" step="0.01" value="${b.stake||0}"></div></div>
         <div class="kv"><div>Odds</div><div><input class="i-odds" type="number" step="0.01" value="${b.odds||0}"></div></div>
-        <div class="kv">
-          <div>Result</div>
+        <div class="kv"><div>Result</div>
           <div>
             <select class="i-res">
-              <option value="pending" ${b.result==='pending'?'selected':''}>Pending</option>
-              <option value="won" ${b.result==='won'?'selected':''}>Won</option>
-              <option value="lost" ${b.result==='lost'?'selected':''}>Lost</option>
-              <option value="void" ${b.result==='void'?'selected':''}>Void</option>
-              <option value="cashed" ${b.result==='cashed'?'selected':''}>Cashed</option>
+              <option value="pending" ${b.result==="pending"?"selected":""}>Pending</option>
+              <option value="won" ${b.result==="won"?"selected":""}>Won</option>
+              <option value="lost" ${b.result==="lost"?"selected":""}>Lost</option>
+              <option value="void" ${b.result==="void"?"selected":""}>Void</option>
+              <option value="cashed" ${b.result==="cashed"?"selected":""}>Cashed</option>
             </select>
           </div>
         </div>
         <div class="kv"><div>Cash-out Return</div><div><input class="i-ret" type="number" step="0.01" value="${b.cashReturn||0}"></div></div>
         <div class="kv"><div>Fee Applied</div><div><input class="i-fee" type="number" step="0.01" value="${b.feeApplied||0}"></div></div>
         <div class="kv"><div>Withdrawal</div><div><input class="i-wdr" type="number" step="0.01" value="${b.withdrawal||0}"></div></div>
-        <div class="kv"><div>Notes</div><div><textarea class="i-notes" rows="2">${b.notes||''}</textarea></div></div>
+        <div class="kv"><div>Notes</div><div><textarea class="i-notes" rows="2">${b.notes||""}</textarea></div></div>
       </div>
     `;
-
     const details = row.querySelector(".details");
-    row.querySelector(".secondary").onclick = () =>
+    row.querySelector(".secondary").onclick = () => {
       details.classList.toggle("show");
-
-    row.querySelector("[data-act='del']").onclick = async ()=>{
+    };
+    row.querySelector("[data-act='del']").onclick = async () => {
       if (!confirm("Delete bet?")) return;
       await deleteDoc(doc(db,"betting_trades",b.id));
       refreshAll();
     };
-
-    row.querySelector("[data-act='save']").onclick = async ()=>{
+    row.querySelector("[data-act='save']").onclick = async () => {
       const nd   = row.querySelector(".i-date").value || b.date;
       const nsrc = row.querySelector(".i-source").value || "Unknown";
       const nev  = row.querySelector(".i-event").value;
@@ -840,11 +769,18 @@ function renderListAndSummary(allBets, fees, adjustments){
       else npl = 0;
 
       await updateDoc(doc(db,"betting_trades",b.id),{
-        date:nd, source:nsrc, event:nev, selection:nsel,
-        stake:nst, odds:nods,
-        result:nres, cashReturn:nret,
-        feeApplied:nfee, withdrawal:nwdr,
-        pnl:npl, notes:nnotes
+        date:nd,
+        source:nsrc,
+        event:nev,
+        selection:nsel,
+        stake:nst,
+        odds:nods,
+        result:nres,
+        cashReturn:nret,
+        feeApplied:nfee,
+        withdrawal:nwdr,
+        pnl:npl,
+        notes:nnotes
       });
       refreshAll();
     };
@@ -852,7 +788,7 @@ function renderListAndSummary(allBets, fees, adjustments){
     wrap.appendChild(row);
   });
 
-  // ----- GLOBAL SUMMARY (for filtered bets) -----
+  /* ---- Summary numbers (based on filtered bets) ---- */
   const totals = bets.reduce((a,b)=>{
     const pl = Number(b.pnl||0);
     a.bets++;
@@ -863,105 +799,127 @@ function renderListAndSummary(allBets, fees, adjustments){
     a.withdraw += Number(b.withdrawal||0);
     a.feeApplied += Number(b.feeApplied||0);
     return a;
-  },{bets:0, stake:0, profit:0, loss:0, pl:0, withdraw:0, feeApplied:0, wins:0, losses:0});
+  },{
+    bets:0,
+    stake:0,
+    profit:0,
+    loss:0,
+    pl:0,
+    withdraw:0,
+    feeApplied:0,
+    wins:0,
+    losses:0
+  });
 
   const feesBank = fees.reduce((s,f)=> s + Number(f.amount||0), 0);
 
   const startBal = Number($("startBalance").value||0);
-
-  // bankroll adjustments: deposits increase, withdrawals decrease
-  const adjNet = adjustments.reduce((s,a)=>{
-    const amt = Number(a.amount||0);
-    return s + (a.type==="deposit" ? amt : -amt);
-  },0);
-
-  const bankroll = startBal + totals.pl + adjNet - totals.withdraw;
+  const bankroll = startBal + totals.pl - totals.withdraw; // fees don't touch stake bankroll
   const afterFees = totals.pl - (feesBank + totals.feeApplied);
   const hitRate = totals.bets ? Math.round((totals.wins / totals.bets)*100) : 0;
 
-  $("sBets").textContent = String(totals.bets);
-  $("sHit").textContent  = hitRate + "%";
-  $("sStake").textContent= fmt(totals.stake);
-  $("sProfit").textContent= fmt(totals.profit);
-  $("sLoss").textContent  = fmt(Math.abs(totals.loss));
-  $("sPL").textContent    = fmt(totals.pl);
-  $("sWdr").textContent   = fmt(totals.withdraw);
-  $("sFees").textContent  = fmt(feesBank + totals.feeApplied);
+  $("sBets").textContent   = String(totals.bets);
+  $("sHit").textContent    = hitRate + "%";
+  $("sStake").textContent  = fmt(totals.stake);
+  $("sProfit").textContent = fmt(totals.profit);
+  $("sLoss").textContent   = fmt(Math.abs(totals.loss));
+  $("sPL").textContent     = fmt(totals.pl);
+  $("sWdr").textContent    = fmt(totals.withdraw);
+  $("sFees").textContent   = fmt(feesBank + totals.feeApplied);
   $("sAfterFees").textContent = fmt(afterFees);
-  $("sBankroll").textContent = fmt(bankroll);
-  $("sFeesBank").textContent = fmt(feesBank);
+  $("sBankroll").textContent  = fmt(bankroll);
+  $("sFeesBank").textContent  = fmt(feesBank);
 
-  // ----- SOURCE SUMMARY (uses ALL bets / not filtered by sourceFilter) -----
-  updateSourceSummary(allBets);
+  /* ---- Scope label ---- */
+  const dateLabel =
+    state.selectedDate === "all" ? "All dates" : state.selectedDate;
+  const sfVal = $("sourceFilter").value;
+  let srcLabel = "all sources";
+  if (sfVal === "ODDS BREAKER") srcLabel = "ODDS BREAKER";
+  else if (sfVal === "SNEWJ PROMPS") srcLabel = "SNEWJ PROMPS";
+  else if (sfVal === "Unknown") srcLabel = "Unknown";
+  else if (sfVal === "__custom") srcLabel = "custom sources";
+  $("scopeSummary").innerHTML =
+    `Showing <strong>${dateLabel}</strong>, <strong>${srcLabel}</strong>, ` +
+    ( $("statusFilter").value === "all"
+      ? "all statuses."
+      : `status <strong>${$("statusFilter").value}</strong>.`
+    );
+
+  /* ---- Source P/L breakdown (per date tab) ---- */
+  const sfilt = $("sourceFilter").value;
+
+  // work on dateFiltered (only date tab applied)
+  const forDate = dateFiltered;
+
+  if (sfilt === "all") {
+    // show breakdown for each source on this date tab
+    const bySrc = {};
+    forDate.forEach(b=>{
+      const src = b.source || "Unknown";
+      bySrc[src] = (bySrc[src] || 0) + Number(b.pnl||0);
+    });
+    const parts = Object.entries(bySrc)
+      .sort((a,b)=>Math.abs(b[1]) - Math.abs(a[1]))
+      .map(([src,pl]) =>
+        `${src}: <span class="${pl>=0?"good":"bad"}">${fmt(pl)}</span>`
+      );
+    $("sourcePL").innerHTML =
+      parts.length
+        ? `Source P/L for this date tab: ${parts.join(" · ")}`
+        : "No bets yet for this date tab.";
+  } else {
+    // show only the chosen source P/L on this date tab
+    const matchSrc = b => (
+      sfilt === "__custom"
+        ? (b.source!=="ODDS BREAKER" && b.source!=="SNEWJ PROMPS" && b.source!=="Unknown")
+        : b.source === sfilt
+    );
+    const sum = forDate
+      .filter(matchSrc)
+      .reduce((s,b)=> s + Number(b.pnl||0), 0);
+    const label =
+      sfilt === "__custom" ? "Custom sources" : sfilt;
+    $("sourcePL").innerHTML =
+      `${label} P/L for this date tab: ` +
+      `<span class="${sum>=0?"good":"bad"}">${fmt(sum)}</span>`;
+  }
 }
 
-/* -------- FEES LIST RENDER -------- */
+/* ---------- Fees list render ---------- */
 function renderFees(fees){
   const box = $("feesList");
   box.innerHTML = "";
   fees.sort((a,b)=> (a.date||"").localeCompare(b.date||""));
-  fees.forEach(f=>{
+  fees.forEach(f => {
     const div = document.createElement("div");
-    div.className="feeItem";
+    div.className = "feeItem";
     div.innerHTML = `
       <div class="meta">
-        <b>${f.date}</b> · ${fmt(f.amount)} ${f.source?('· '+f.source):''}
+        <b>${f.date}</b> · ${fmt(f.amount)}
+        ${f.source ? (" · " + f.source) : ""}
       </div>
-      ${f.notes? `<div class="small" style="margin-top:4px">${f.notes}</div>`:''}
+      ${f.notes ? `<div class="small" style="margin-top:4px">${f.notes}</div>` : ""}
       <div class="actions" style="margin-top:6px">
         <button class="btn secondary" data-a="edit">Edit</button>
         <button class="btn danger" data-a="del">Delete</button>
       </div>
     `;
-    div.querySelector("[data-a='del']").onclick = async ()=>{
+    div.querySelector("[data-a='del']").onclick = async () => {
       if (!confirm("Delete fee?")) return;
       await deleteDoc(doc(db,"betting_fees",f.id));
       refreshAll();
     };
-    div.querySelector("[data-a='edit']").onclick = async ()=>{
+    div.querySelector("[data-a='edit']").onclick = async () => {
       const nd = prompt("Date (YYYY-MM-DD)", f.date) || f.date;
       const na = Number(prompt("Amount", f.amount) || f.amount);
-      const ns = prompt("Source (optional)", f.source||"") || null;
-      const nn = prompt("Notes (optional)", f.notes||"") || null;
-      await updateDoc(doc(db,"betting_fees",f.id),{date:nd,amount:na,source:ns,notes:nn});
-      refreshAll();
-    };
-    box.appendChild(div);
-  });
-}
-
-/* -------- ADJUSTMENTS LIST RENDER (DEPOSIT/WITHDRAWAL) -------- */
-function renderAdjustments(adjs){
-  const box = $("adjList");
-  box.innerHTML = "";
-  adjs.sort((a,b)=> (a.date||"").localeCompare(b.date||""));
-  adjs.forEach(a=>{
-    const signLabel = a.type==="deposit" ? "Deposit" : "Withdrawal";
-    const div = document.createElement("div");
-    div.className="adjItem";
-    div.innerHTML = `
-      <div class="meta">
-        <b>${a.date}</b> · ${signLabel} · ${fmt(a.amount)}
-      </div>
-      ${a.notes? `<div class="small" style="margin-top:4px">${a.notes}</div>`:''}
-      <div class="actions" style="margin-top:6px">
-        <button class="btn secondary" data-a="edit">Edit</button>
-        <button class="btn danger" data-a="del">Delete</button>
-      </div>
-    `;
-    div.querySelector("[data-a='del']").onclick = async ()=>{
-      if (!confirm("Delete adjustment?")) return;
-      await deleteDoc(doc(db,"betting_bankroll",a.id));
-      refreshAll();
-    };
-    div.querySelector("[data-a='edit']").onclick = async ()=>{
-      const nd = prompt("Date (YYYY-MM-DD)", a.date) || a.date;
-      const nt = prompt("Type (deposit/withdrawal)", a.type) || a.type;
-      const na = Number(prompt("Amount", a.amount) || a.amount);
-      const nn = prompt("Notes (optional)", a.notes||"") || null;
-      await updateDoc(doc(db,"betting_bankroll",a.id),{
-        date:nd,type:(nt==="withdrawal"?"withdrawal":"deposit"),
-        amount:na,notes:nn
+      const ns = prompt("Source (optional)", f.source || "") || null;
+      const nn = prompt("Notes (optional)", f.notes || "") || null;
+      await updateDoc(doc(db,"betting_fees",f.id),{
+        date:nd,
+        amount:na,
+        source:ns,
+        notes:nn
       });
       refreshAll();
     };
