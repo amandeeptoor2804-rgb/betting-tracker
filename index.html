@@ -6,64 +6,195 @@
 <title>Betting Ledger</title>
 <meta name="theme-color" content="#020817" />
 <style>
-:root{--bg:#020817;--card:#0f172a;--border:#1f2937;--fg:#e5e7eb;--muted:#9ca3af;--accent:#22c55e;--accent-soft:#064e3b;--danger:#ef4444}
+:root{
+  --bg:#020817;
+  --card:#0f172a;
+  --border:#1f2937;
+  --fg:#e5e7eb;
+  --muted:#9ca3af;
+  --accent:#22c55e;
+  --accent-soft:#064e3b;
+  --danger:#ef4444;
+}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--fg);font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--fg);
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;
+}
 .container{max-width:980px;margin:0 auto;padding:12px}
-.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:12px;margin-top:10px}
+.card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:12px;
+  margin-top:10px;
+}
 h1,h2,h3{margin:4px 0 8px;font-weight:600}
 .small{font-size:12px;color:var(--muted)}
-button,input,select,textarea{width:100%;padding:10px;border-radius:10px;border:1px solid var(--border);background:#020817;color:var(--fg);font:inherit}
-button{cursor:pointer;font-weight:700;background:var(--accent);color:#022c22;border-color:#16a34a;transition:transform .05s}
+button,input,select,textarea{
+  width:100%;
+  padding:10px;
+  border-radius:10px;
+  border:1px solid var(--border);
+  background:#020817;
+  color:var(--fg);
+  font:inherit;
+}
+button{
+  cursor:pointer;
+  font-weight:700;
+  background:var(--accent);
+  color:#022c22;
+  border-color:#16a34a;
+  transition:transform .05s;
+}
 button:active{transform:scale(.98)}
 button.secondary{background:#111827;color:var(--fg)}
 button.danger{background:var(--danger);color:#111827;border-color:#b91c1c}
 .grid{display:grid;gap:8px}
 .cols-2{grid-template-columns:1fr 1fr}
 .cols-3{grid-template-columns:repeat(3,1fr)}
-.summary{display:grid;gap:8px;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));margin-top:6px}
-.sum{background:#020817;border:1px solid var(--border);border-radius:12px;padding:8px}
-.sum .lab{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
-.sum .val{margin-top:4px;font-size:17px;font-weight:800}
-.tabs{display:flex;gap:6px;overflow-x:auto;padding:4px 0}
-.tab{flex:0 0 auto;padding:6px 12px;border:1px solid var(--border);border-radius:999px;background:#020817;color:var(--muted);font-size:11px;white-space:nowrap;cursor:pointer}
-.tab.active{background:var(--accent-soft);color:var(--accent);border-color:var(--accent)}
-.list{display:flex;flex-direction:column;gap:8px;margin-top:8px}
-.row{border:1px solid var(--border);border-radius:12px;background:#0b142f;padding:10px}
-.rowTop{display:flex;justify-content:space-between;gap:10px;align-items:center}
+.summary{
+  display:grid;
+  gap:8px;
+  grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+  margin-top:6px;
+}
+.sum{
+  background:#020817;
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:8px;
+}
+.sum .lab{
+  font-size:10px;
+  color:var(--muted);
+  text-transform:uppercase;
+  letter-spacing:.04em;
+}
+.sum .val{
+  margin-top:4px;
+  font-size:17px;
+  font-weight:800;
+}
+.tabs{
+  display:flex;
+  gap:6px;
+  overflow-x:auto;
+  padding:4px 0;
+}
+.tab{
+  flex:0 0 auto;
+  padding:6px 12px;
+  border:1px solid var(--border);
+  border-radius:999px;
+  background:#020817;
+  color:var(--muted);
+  font-size:11px;
+  white-space:nowrap;
+  cursor:pointer;
+}
+.tab.active{
+  background:var(--accent-soft);
+  color:var(--accent);
+  border-color:var(--accent);
+}
+.list{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  margin-top:8px;
+}
+.row{
+  border:1px solid var(--border);
+  border-radius:12px;
+  background:#0b142f;
+  padding:10px;
+}
+.rowTop{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  align-items:center;
+}
 .title{font-weight:700}
-.meta{display:flex;flex-wrap:wrap;gap:8px;line-height:1.3;margin-top:6px;font-size:12px;color:var(--muted)}
-.pill{padding:4px 10px;border:1px solid var(--border);border-radius:999px;background:#020817}
-.good{color:#22c55e}.bad{color:#ef4444}
-.actions{display:flex;gap:6px;margin-top:8px}
-.actions .btn{flex:1;border-radius:999px;padding:10px;font-weight:700}
-.details{margin-top:8px;padding:8px;border:1px dashed var(--border);border-radius:10px;display:none}
+.meta{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  line-height:1.3;
+  margin-top:6px;
+  font-size:12px;
+  color:var(--muted);
+}
+.pill{
+  padding:4px 10px;
+  border:1px solid var(--border);
+  border-radius:999px;
+  background:#020817;
+}
+.good{color:#22c55e}
+.bad{color:#ef4444}
+.actions{
+  display:flex;
+  gap:6px;
+  margin-top:8px;
+}
+.actions .btn{
+  flex:1;
+  border-radius:999px;
+  padding:10px;
+  font-weight:700;
+}
+.details{
+  margin-top:8px;
+  padding:8px;
+  border:1px dashed var(--border);
+  border-radius:10px;
+  display:none;
+}
 .details.show{display:block}
-.kv{display:grid;grid-template-columns:120px 1fr;gap:6px;margin-top:4px}
+.kv{
+  display:grid;
+  grid-template-columns:120px 1fr;
+  gap:6px;
+  margin-top:4px;
+}
 .feesList{margin-top:8px}
-.feesList .feeItem{border:1px solid var(--border);border-radius:10px;padding:8px;margin-top:6px;background:#0b142f}
+.feesList .feeItem{
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:8px;
+  margin-top:6px;
+  background:#0b142f;
+}
+.adjList{margin-top:8px}
+.adjItem{
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:8px;
+  margin-top:6px;
+  background:#020817;
+}
 
 /* --- Responsive stacking for tablets & phones --- */
 @media (max-width: 1024px){
-  /* all form grids stack vertically */
   .cols-2,
   .cols-3{
     grid-template-columns:1fr;
   }
-
   .rowTop{
     flex-wrap:wrap;
     gap:6px;
   }
-
   .actions{
     flex-direction:column;
   }
-
   .actions .btn{
     width:100%;
   }
-
   .kv{
     grid-template-columns:1fr;
   }
@@ -85,14 +216,17 @@ button.danger{background:var(--danger);color:#111827;border-color:#b91c1c}
     <p class="small">Sign in with the same Firebase email/password. Separate from your trading journal & expense tracker.</p>
     <input id="email" type="email" placeholder="Email" autocomplete="username" />
     <input id="password" type="password" placeholder="Password" autocomplete="current-password" />
-    <button id="loginBtn">Login</button>
+    <button id="loginBtn" type="button">Login</button>
     <p id="loginErr" class="small" style="color:#fca5a5;"></p>
   </section>
 
   <!-- APP -->
   <section id="appCard" class="card" style="display:none;">
     <div class="grid cols-2" style="align-items:center">
-      <div><h2>Dashboard</h2><div id="userEmail" class="small"></div></div>
+      <div>
+        <h2>Dashboard</h2>
+        <div id="userEmail" class="small"></div>
+      </div>
       <div class="right"><button id="logoutBtn" class="secondary">Logout</button></div>
     </div>
 
@@ -104,22 +238,57 @@ button.danger{background:var(--danger);color:#111827;border-color:#b91c1c}
       <div class="sum"><div class="lab">Profit</div><div id="sProfit" class="val">$0.00</div></div>
       <div class="sum"><div class="lab">Loss</div><div id="sLoss" class="val">$0.00</div></div>
       <div class="sum"><div class="lab">Net P/L</div><div id="sPL" class="val">$0.00</div></div>
-      <div class="sum"><div class="lab">Withdrawals</div><div id="sWdr" class="val">$0.00</div></div>
+      <div class="sum"><div class="lab">Withdrawals (per bets)</div><div id="sWdr" class="val">$0.00</div></div>
       <div class="sum"><div class="lab">Fees Paid (bank)</div><div id="sFees" class="val">$0.00</div></div>
-      <div class="sum"><div class="lab">Net After Fees</div><div id="sAfterFees" class="val">$0.00</div></div>
+      <div class="sum"><div class="lab">Net After All Fees</div><div id="sAfterFees" class="val">$0.00</div></div>
     </div>
 
     <!-- BALANCES -->
     <div class="summary" style="margin-top:6px">
       <div class="sum">
-        <div class="lab">Starting Balance</div>
+        <div class="lab">Starting Balance (Stake)</div>
         <div class="grid cols-2" style="gap:6px;margin-top:6px">
           <input id="startBalance" type="number" step="0.01" />
           <button id="saveStart" class="secondary">Save</button>
         </div>
+        <p class="small" style="margin-top:4px">
+          Example: put your current Stake account balance here (e.g., 1310). This is your baseline without ongoing trades.
+        </p>
       </div>
-      <div class="sum"><div class="lab">Stake Bankroll</div><div id="sBankroll" class="val">$0.00</div></div>
+      <div class="sum"><div class="lab">Stake Bankroll (live)</div><div id="sBankroll" class="val">$0.00</div></div>
       <div class="sum"><div class="lab">Fees Bank Total</div><div id="sFeesBank" class="val">$0.00</div></div>
+    </div>
+
+    <!-- BANKROLL ADJUSTMENTS (NEW) -->
+    <div class="card">
+      <h3>Bankroll Adjustments (Deposits / Withdrawals)</h3>
+      <p class="small">
+        Use this when you send money <b>into</b> Stake (Deposit) or <b>take money out</b> from Stake to bank (Withdrawal).
+        This directly adjusts the Stake bankroll. Membership fees below stay in your original bank, not stake.
+      </p>
+      <div class="grid cols-3">
+        <div>
+          <div class="small">Date</div>
+          <input id="adjDate" type="date" />
+        </div>
+        <div>
+          <div class="small">Type</div>
+          <select id="adjType">
+            <option value="deposit">Deposit into Stake</option>
+            <option value="withdrawal">Withdrawal from Stake</option>
+          </select>
+        </div>
+        <div>
+          <div class="small">Amount</div>
+          <input id="adjAmount" type="number" step="0.01" />
+        </div>
+      </div>
+      <div style="margin-top:6px">
+        <div class="small">Notes (optional)</div>
+        <input id="adjNotes" />
+      </div>
+      <button id="addAdj" class="secondary" style="margin-top:8px">Add Adjustment</button>
+      <div id="adjList" class="adjList"></div>
     </div>
 
     <!-- FILTER BAR -->
@@ -144,32 +313,59 @@ button.danger{background:var(--danger);color:#111827;border-color:#b91c1c}
       </div>
     </div>
 
+    <!-- SOURCE SUMMARY (per selected date) -->
+    <div class="card">
+      <h3>Source Summary (by selected date)</h3>
+      <p class="small">Uses the current date tab and status filter. Shows P/L per source.</p>
+      <div id="sourceSummary" class="summary"></div>
+    </div>
+
     <!-- ADD BET -->
     <div class="card">
       <h3>Add Bet</h3>
       <div class="grid cols-2">
-        <div><div class="small">Date</div><input id="betDate" type="date" /></div>
-        <div><div class="small">Source</div>
+        <div>
+          <div class="small">Date</div>
+          <input id="betDate" type="date" />
+        </div>
+        <div>
+          <div class="small">Source</div>
           <select id="betSource">
             <option>ODDS BREAKER</option>
             <option>SNEWJ PROMPS</option>
             <option>Unknown</option>
             <option value="__custom">Other (custom)</option>
           </select>
-          <input id="betSourceCustom" placeholder="Type source…" style="display:none;margin-top:6px">
+          <input id="betSourceCustom" placeholder="Type source…" style="display:none;margin-top:6px" />
         </div>
       </div>
       <div class="grid cols-2" style="margin-top:6px">
-        <div><div class="small">Event / Match</div><input id="betEvent" placeholder="e.g., Bulls vs Pistons" /></div>
-        <div><div class="small">Selection</div><input id="betSelection" placeholder="e.g., Pistons ML" /></div>
+        <div>
+          <div class="small">Event / Match</div>
+          <input id="betEvent" placeholder="e.g., Bulls vs Pistons" />
+        </div>
+        <div>
+          <div class="small">Selection</div>
+          <input id="betSelection" placeholder="e.g., Pistons ML" />
+        </div>
       </div>
       <div class="grid cols-3" style="margin-top:6px">
-        <div><div class="small">Stake</div><input id="betStake" type="number" step="0.01" /></div>
-        <div><div class="small">Odds</div><input id="betOdds" type="number" step="0.01" /></div>
-        <div><div class="small">Withdrawal (optional)</div><input id="betWdr" type="number" step="0.01" /></div>
+        <div>
+          <div class="small">Stake</div>
+          <input id="betStake" type="number" step="0.01" />
+        </div>
+        <div>
+          <div class="small">Odds</div>
+          <input id="betOdds" type="number" step="0.01" />
+        </div>
+        <div>
+          <div class="small">Withdrawal (optional)</div>
+          <input id="betWdr" type="number" step="0.01" />
+        </div>
       </div>
       <div class="grid cols-3" style="margin-top:6px">
-        <div><div class="small">Result</div>
+        <div>
+          <div class="small">Result</div>
           <select id="betResult">
             <option value="pending">Pending</option>
             <option value="won">Won</option>
@@ -178,10 +374,19 @@ button.danger{background:var(--danger);color:#111827;border-color:#b91c1c}
             <option value="cashed">Cashed</option>
           </select>
         </div>
-        <div><div class="small">Cash-out Return</div><input id="betCashReturn" type="number" step="0.01" placeholder="only if Cashed" /></div>
-        <div><div class="small">Fee Applied to this pick</div><input id="betFeeApplied" type="number" step="0.01" placeholder="optional" /></div>
+        <div>
+          <div class="small">Cash-out Return</div>
+          <input id="betCashReturn" type="number" step="0.01" placeholder="only if Cashed" />
+        </div>
+        <div>
+          <div class="small">Fee Applied to this pick</div>
+          <input id="betFeeApplied" type="number" step="0.01" placeholder="optional" />
+        </div>
       </div>
-      <div style="margin-top:6px"><div class="small">Notes</div><textarea id="betNotes" rows="2"></textarea></div>
+      <div style="margin-top:6px">
+        <div class="small">Notes</div>
+        <textarea id="betNotes" rows="2"></textarea>
+      </div>
       <button id="addBet" style="margin-top:8px">Save Bet</button>
       <p id="addErr" class="small" style="color:#fca5a5"></p>
     </div>
@@ -190,11 +395,23 @@ button.danger{background:var(--danger);color:#111827;border-color:#b91c1c}
     <div class="card">
       <h3>Membership Fees (Paid from BANK)</h3>
       <div class="grid cols-3">
-        <div><div class="small">Date</div><input id="feeDate" type="date" /></div>
-        <div><div class="small">Amount</div><input id="feeAmount" type="number" step="0.01" /></div>
-        <div><div class="small">Source (optional)</div><input id="feeSource" placeholder="e.g., ODDS BREAKER" /></div>
+        <div>
+          <div class="small">Date</div>
+          <input id="feeDate" type="date" />
+        </div>
+        <div>
+          <div class="small">Amount</div>
+          <input id="feeAmount" type="number" step="0.01" />
+        </div>
+        <div>
+          <div class="small">Source (optional)</div>
+          <input id="feeSource" placeholder="e.g., ODDS BREAKER" />
+        </div>
       </div>
-      <div style="margin-top:6px"><div class="small">Notes</div><input id="feeNotes" /></div>
+      <div style="margin-top:6px">
+        <div class="small">Notes</div>
+        <input id="feeNotes" />
+      </div>
       <button id="addFee" class="secondary" style="margin-top:8px">Add Fee</button>
       <div class="feesList" id="feesList"></div>
     </div>
@@ -210,8 +427,27 @@ button.danger{background:var(--danger);color:#111827;border-color:#b91c1c}
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
-import { getFirestore, collection, addDoc, getDocs, doc, getDoc, setDoc, updateDoc, deleteDoc, serverTimestamp, query, where, orderBy } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  getDocs,
+  doc,
+  getDoc,
+  setDoc,
+  updateDoc,
+  deleteDoc,
+  serverTimestamp,
+  query,
+  where,
+  orderBy
+} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 
 /* Firebase config (exact) */
 const firebaseConfig = {
@@ -228,35 +464,54 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-const $ = id => document.getElementById(id);
-const fmt = n => "$" + (Number(n)||0).toFixed(2);
+const $  = id => document.getElementById(id);
+const fmt = n => "$" + (Number(n) || 0).toFixed(2);
 const today = () => new Date().toISOString().slice(0,10);
 
 $("betDate").value = today();
 $("feeDate").value = today();
+$("adjDate").value = today();
 
-/* Auth */
-$("loginBtn").onclick = async () => {
+/* -------- AUTH -------- */
+async function handleLogin() {
+  const email = $("email").value.trim();
+  const pw    = $("password").value;
   $("loginErr").textContent = "";
-  try { await signInWithEmailAndPassword(auth, $("email").value.trim(), $("password").value); }
-  catch(e){ $("loginErr").textContent = e.message || "Login failed"; }
-};
+
+  if (!email || !pw) {
+    $("loginErr").textContent = "Please enter email and password.";
+    return;
+  }
+
+  try {
+    await signInWithEmailAndPassword(auth, email, pw);
+  } catch (e) {
+    console.error(e);
+    $("loginErr").textContent = e.message || "Login failed";
+  }
+}
+
+const loginBtn = $("loginBtn");
+if (loginBtn) {
+  loginBtn.addEventListener("click", handleLogin);
+}
+
 $("logoutBtn").onclick = () => signOut(auth);
 
-onAuthStateChanged(auth, async (user)=>{
-  if (user){
-    $("loginCard").style.display="none";
-    $("appCard").style.display="block";
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    $("loginCard").style.display = "none";
+    $("appCard").style.display = "block";
     $("userEmail").textContent = user.email || "";
     await loadSettings();
     await refreshAll();
   } else {
-    $("appCard").style.display="none";
-    $("loginCard").style.display="block";
+    $("appCard").style.display = "none";
+    $("loginCard").style.display = "block";
   }
 });
 
-/* Settings (starting balance) */
+/* -------- SETTINGS (STARTING BALANCE) -------- */
 async function loadSettings(){
   const uid = auth.currentUser.uid;
   const ref = doc(db,"betting_settings",uid);
@@ -271,13 +526,18 @@ async function loadSettings(){
 $("saveStart").onclick = async ()=>{
   const uid = auth.currentUser.uid;
   await setDoc(doc(db,"betting_settings",uid),{
-    ownerUid:uid, startingBalance:Number($("startBalance").value||0), updatedAt:serverTimestamp()
+    ownerUid:uid,
+    startingBalance:Number($("startBalance").value||0),
+    updatedAt:serverTimestamp()
   },{merge:true});
   await refreshAll();
 };
 
-/* Add Bet */
-$("betSource").onchange = () => $("betSourceCustom").style.display = ($("betSource").value==="__custom")?"block":"none";
+/* -------- ADD BET -------- */
+$("betSource").onchange = () => {
+  $("betSourceCustom").style.display =
+    ($("betSource").value==="__custom") ? "block" : "none";
+};
 
 $("addBet").onclick = async () => {
   const user = auth.currentUser;
@@ -285,7 +545,9 @@ $("addBet").onclick = async () => {
 
   const date  = $("betDate").value || today();
   const srcSel = $("betSource").value;
-  const source = srcSel === "__custom" ? ($("betSourceCustom").value.trim() || "Other") : srcSel;
+  const source = srcSel === "__custom"
+    ? ($("betSourceCustom").value.trim() || "Other")
+    : srcSel;
 
   const event     = $("betEvent").value.trim();
   const selection = $("betSelection").value.trim();
@@ -304,10 +566,10 @@ $("addBet").onclick = async () => {
 
   // P/L logic
   let pnl = 0;
-  if (result === "cashed") pnl = cashReturn - stake;
-  else if (result === "won") pnl = (odds - 1) * stake;
-  else if (result === "lost") pnl = -stake;
-  else pnl = 0;
+  if (result === "cashed")      pnl = cashReturn - stake;
+  else if (result === "won")    pnl = (odds - 1) * stake;
+  else if (result === "lost")   pnl = -stake;
+  else                          pnl = 0;
 
   try {
     await addDoc(collection(db, "betting_trades"), {
@@ -319,8 +581,8 @@ $("addBet").onclick = async () => {
       createdAt: serverTimestamp()
     });
 
-    ["betStake","betOdds","betWdr","betCashReturn","betFeeApplied","betNotes"]
-      .forEach(id => $(id).value = "");
+    ["betStake","betOdds","betWdr","betCashReturn",
+     "betFeeApplied","betNotes"].forEach(id => $(id).value = "");
 
     await refreshAll();
     alert("Saved ✅");
@@ -330,7 +592,7 @@ $("addBet").onclick = async () => {
   }
 };
 
-/* Add Fee (bank) */
+/* -------- ADD FEE (BANK) -------- */
 $("addFee").onclick = async ()=>{
   const uid = auth.currentUser.uid;
   const date   = $("feeDate").value || today();
@@ -338,32 +600,77 @@ $("addFee").onclick = async ()=>{
   if (!amount) return;
   const source = $("feeSource").value.trim() || null;
   const notes  = $("feeNotes").value.trim() || null;
-  await addDoc(collection(db,"betting_fees"),{ownerUid:uid,date,amount,source,notes,createdAt:serverTimestamp()});
-  $("feeAmount").value=""; $("feeSource").value=""; $("feeNotes").value="";
+
+  await addDoc(collection(db,"betting_fees"),{
+    ownerUid:uid,date,amount,source,notes,createdAt:serverTimestamp()
+  });
+
+  $("feeAmount").value="";
+  $("feeSource").value="";
+  $("feeNotes").value="";
   await refreshAll();
 };
 
-/* Load + render all */
+/* -------- ADD BANKROLL ADJUSTMENT (DEPOSIT/WITHDRAWAL) -------- */
+$("addAdj").onclick = async ()=>{
+  const uid    = auth.currentUser.uid;
+  const date   = $("adjDate").value || today();
+  const type   = $("adjType").value; // deposit | withdrawal
+  const amount = Number($("adjAmount").value||0);
+  const notes  = $("adjNotes").value.trim() || null;
+  if (!amount) return;
+
+  await addDoc(collection(db,"betting_bankroll"),{
+    ownerUid:uid,date,type,amount,notes,createdAt:serverTimestamp()
+  });
+
+  $("adjAmount").value="";
+  $("adjNotes").value="";
+  await refreshAll();
+};
+
+/* -------- MAIN REFRESH -------- */
 async function refreshAll(){
   const uid = auth.currentUser.uid;
-  const tSnap = await getDocs(query(collection(db,"betting_trades"), where("ownerUid","==",uid)));
+  const tSnap = await getDocs(
+    query(collection(db,"betting_trades"), where("ownerUid","==",uid))
+  );
   const allBets = tSnap.docs.map(d=>({id:d.id, ...d.data()}));
 
-  const fSnap = await getDocs(query(collection(db,"betting_fees"), where("ownerUid","==",uid), orderBy("date","asc")));
+  const fSnap = await getDocs(
+    query(collection(db,"betting_fees"),
+      where("ownerUid","==",uid),
+      orderBy("date","asc"))
+  );
   const fees = fSnap.docs.map(d=>({id:d.id, ...d.data()}));
+
+  const aSnap = await getDocs(
+    query(collection(db,"betting_bankroll"),
+      where("ownerUid","==",uid),
+      orderBy("date","asc"))
+  );
+  const adjustments = aSnap.docs.map(d=>({id:d.id, ...d.data()}));
 
   buildDateTabs(allBets);
   renderFees(fees);
-  renderListAndSummary(allBets, fees);
+  renderAdjustments(adjustments);
+  renderListAndSummary(allBets, fees, adjustments);
 }
 
-/* Date tabs + filters + list */
+/* -------- FILTERS & DATE TABS -------- */
 const state = { selectedDate:"all" };
-["statusFilter","sourceFilter"].forEach(id=>$(id).onchange=()=>refreshAll());
+
+["statusFilter","sourceFilter"].forEach(id=>{
+  $(id).onchange = () => refreshAll();
+});
 
 function buildDateTabs(bets){
-  const tabs = $("dateTabs"); tabs.innerHTML="";
-  const dates = Array.from(new Set(bets.map(b=>b.date).filter(Boolean))).sort((a,b)=>b.localeCompare(a));
+  const tabs = $("dateTabs");
+  tabs.innerHTML = "";
+  const dates = Array.from(
+    new Set(bets.map(b=>b.date).filter(Boolean))
+  ).sort((a,b)=>b.localeCompare(a));
+
   const mk = (label,val) => {
     const el = document.createElement("div");
     el.className = "tab" + (state.selectedDate===val?" active":"");
@@ -375,21 +682,83 @@ function buildDateTabs(bets){
   dates.forEach(d=>mk(d,d));
 }
 
-function renderListAndSummary(allBets, fees){
-  // filters
+/* -------- SOURCE SUMMARY (by date + status) -------- */
+function updateSourceSummary(allBets){
+  const box = $("sourceSummary");
+  if (!box) return;
+
+  // base: current date tab + status filter, ignore sourceFilter
+  let base = [...allBets];
+  if (state.selectedDate !== "all") {
+    base = base.filter(b => b.date === state.selectedDate);
+  }
+  const st = $("statusFilter").value;
+  if (st !== "all") {
+    base = base.filter(b => b.result === st);
+  }
+
+  if (!base.length){
+    box.innerHTML = '<div class="small">No bets for this selection yet.</div>';
+    return;
+  }
+
+  // group by source
+  const map = {};
+  base.forEach(b=>{
+    const key = b.source || "Unknown";
+    if (!map[key]) map[key] = {profit:0, loss:0, pl:0, count:0};
+    const pl = Number(b.pnl || 0);
+    map[key].pl += pl;
+    map[key].count++;
+    if (pl > 0) map[key].profit += pl;
+    if (pl < 0) map[key].loss   += pl;
+  });
+
+  const keys = Object.keys(map).sort();
+  box.innerHTML = keys.map(k=>{
+    const m = map[k];
+    return `
+      <div class="sum">
+        <div class="lab">${k}</div>
+        <div class="val">${fmt(m.pl)}</div>
+        <div class="small">
+          Profit: ${fmt(m.profit)}
+          · Loss: ${fmt(Math.abs(m.loss))}
+          · Bets: ${m.count}
+        </div>
+      </div>
+    `;
+  }).join("");
+}
+
+/* -------- RENDER BETS + GLOBAL SUMMARY -------- */
+function renderListAndSummary(allBets, fees, adjustments){
+  // filters for bet LIST + top summary
   let bets = [...allBets];
-  if (state.selectedDate!=="all") bets = bets.filter(b=>b.date===state.selectedDate);
+
+  if (state.selectedDate!=="all") {
+    bets = bets.filter(b=>b.date===state.selectedDate);
+  }
+
   const sf = $("sourceFilter").value;
   if (sf!=="all"){
     bets = bets.filter(b=> sf==="__custom"
-      ? (b.source!=="ODDS BREAKER" && b.source!=="SNEWJ PROMPS" && b.source!=="Unknown")
+      ? (b.source!=="ODDS BREAKER" &&
+         b.source!=="SNEWJ PROMPS" &&
+         b.source!=="Unknown")
       : b.source===sf);
   }
-  const st = $("statusFilter").value; if (st!=="all") bets = bets.filter(b=>b.result===st);
 
-  // list
-  const wrap = $("list"); wrap.innerHTML="";
-  bets.sort((a,b)=> (b.date||"").localeCompare(a.date||"") || (b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));
+  const st = $("statusFilter").value;
+  if (st!=="all") bets = bets.filter(b=>b.result===st);
+
+  // ----- list -----
+  const wrap = $("list");
+  wrap.innerHTML = "";
+  bets.sort((a,b)=>
+    (b.date||"").localeCompare(a.date||"") ||
+    (b.createdAt?.seconds||0)-(a.createdAt?.seconds||0)
+  );
 
   bets.forEach(b=>{
     const pnlAfter = Number(b.pnl||0) - Number(b.feeApplied||0);
@@ -406,7 +775,8 @@ function renderListAndSummary(allBets, fees){
         <span>P/L: <b class="${(b.pnl||0)>=0?'good':'bad'}">${fmt(b.pnl)}</b></span>
         <span>Fee: <b>${fmt(b.feeApplied||0)}</b></span>
         <span>After Fees: <b class="${pnlAfter>=0?'good':'bad'}">${fmt(pnlAfter)}</b></span>
-        <span>Status: <b>${b.result}</b>${b.result==='cashed' ? ` (Return ${fmt(b.cashReturn||0)})` : ''}</span>
+        <span>Status: <b>${b.result}</b>${b.result==='cashed'
+          ? ` (Return ${fmt(b.cashReturn||0)})` : ''}</span>
         ${b.withdrawal? `<span>Withdrawal: <b>${fmt(b.withdrawal)}</b></span>`:''}
       </div>
       <div class="actions">
@@ -421,7 +791,8 @@ function renderListAndSummary(allBets, fees){
         <div class="kv"><div>Selection</div><div><input class="i-sel" value="${b.selection||''}"></div></div>
         <div class="kv"><div>Stake</div><div><input class="i-stake" type="number" step="0.01" value="${b.stake||0}"></div></div>
         <div class="kv"><div>Odds</div><div><input class="i-odds" type="number" step="0.01" value="${b.odds||0}"></div></div>
-        <div class="kv"><div>Result</div>
+        <div class="kv">
+          <div>Result</div>
           <div>
             <select class="i-res">
               <option value="pending" ${b.result==='pending'?'selected':''}>Pending</option>
@@ -438,12 +809,17 @@ function renderListAndSummary(allBets, fees){
         <div class="kv"><div>Notes</div><div><textarea class="i-notes" rows="2">${b.notes||''}</textarea></div></div>
       </div>
     `;
+
     const details = row.querySelector(".details");
-    row.querySelector(".secondary").onclick = ()=> details.classList.toggle("show");
+    row.querySelector(".secondary").onclick = () =>
+      details.classList.toggle("show");
+
     row.querySelector("[data-act='del']").onclick = async ()=>{
       if (!confirm("Delete bet?")) return;
-      await deleteDoc(doc(db,"betting_trades",b.id)); refreshAll();
+      await deleteDoc(doc(db,"betting_trades",b.id));
+      refreshAll();
     };
+
     row.querySelector("[data-act='save']").onclick = async ()=>{
       const nd   = row.querySelector(".i-date").value || b.date;
       const nsrc = row.querySelector(".i-source").value || "Unknown";
@@ -464,8 +840,11 @@ function renderListAndSummary(allBets, fees){
       else npl = 0;
 
       await updateDoc(doc(db,"betting_trades",b.id),{
-        date:nd, source:nsrc, event:nev, selection:nsel, stake:nst, odds:nods,
-        result:nres, cashReturn:nret, feeApplied:nfee, withdrawal:nwdr, pnl:npl, notes:nnotes
+        date:nd, source:nsrc, event:nev, selection:nsel,
+        stake:nst, odds:nods,
+        result:nres, cashReturn:nret,
+        feeApplied:nfee, withdrawal:nwdr,
+        pnl:npl, notes:nnotes
       });
       refreshAll();
     };
@@ -473,7 +852,7 @@ function renderListAndSummary(allBets, fees){
     wrap.appendChild(row);
   });
 
-  // summary
+  // ----- GLOBAL SUMMARY (for filtered bets) -----
   const totals = bets.reduce((a,b)=>{
     const pl = Number(b.pnl||0);
     a.bets++;
@@ -489,7 +868,14 @@ function renderListAndSummary(allBets, fees){
   const feesBank = fees.reduce((s,f)=> s + Number(f.amount||0), 0);
 
   const startBal = Number($("startBalance").value||0);
-  const bankroll = startBal + totals.pl - totals.withdraw; // fees don't touch bankroll
+
+  // bankroll adjustments: deposits increase, withdrawals decrease
+  const adjNet = adjustments.reduce((s,a)=>{
+    const amt = Number(a.amount||0);
+    return s + (a.type==="deposit" ? amt : -amt);
+  },0);
+
+  const bankroll = startBal + totals.pl + adjNet - totals.withdraw;
   const afterFees = totals.pl - (feesBank + totals.feeApplied);
   const hitRate = totals.bets ? Math.round((totals.wins / totals.bets)*100) : 0;
 
@@ -504,17 +890,23 @@ function renderListAndSummary(allBets, fees){
   $("sAfterFees").textContent = fmt(afterFees);
   $("sBankroll").textContent = fmt(bankroll);
   $("sFeesBank").textContent = fmt(feesBank);
+
+  // ----- SOURCE SUMMARY (uses ALL bets / not filtered by sourceFilter) -----
+  updateSourceSummary(allBets);
 }
 
-/* Fees render list */
+/* -------- FEES LIST RENDER -------- */
 function renderFees(fees){
-  const box = $("feesList"); box.innerHTML="";
+  const box = $("feesList");
+  box.innerHTML = "";
   fees.sort((a,b)=> (a.date||"").localeCompare(b.date||""));
   fees.forEach(f=>{
     const div = document.createElement("div");
     div.className="feeItem";
     div.innerHTML = `
-      <div class="meta"><b>${f.date}</b> · ${fmt(f.amount)} ${f.source?('· '+f.source):''}</div>
+      <div class="meta">
+        <b>${f.date}</b> · ${fmt(f.amount)} ${f.source?('· '+f.source):''}
+      </div>
       ${f.notes? `<div class="small" style="margin-top:4px">${f.notes}</div>`:''}
       <div class="actions" style="margin-top:6px">
         <button class="btn secondary" data-a="edit">Edit</button>
@@ -523,7 +915,8 @@ function renderFees(fees){
     `;
     div.querySelector("[data-a='del']").onclick = async ()=>{
       if (!confirm("Delete fee?")) return;
-      await deleteDoc(doc(db,"betting_fees",f.id)); refreshAll();
+      await deleteDoc(doc(db,"betting_fees",f.id));
+      refreshAll();
     };
     div.querySelector("[data-a='edit']").onclick = async ()=>{
       const nd = prompt("Date (YYYY-MM-DD)", f.date) || f.date;
@@ -531,6 +924,45 @@ function renderFees(fees){
       const ns = prompt("Source (optional)", f.source||"") || null;
       const nn = prompt("Notes (optional)", f.notes||"") || null;
       await updateDoc(doc(db,"betting_fees",f.id),{date:nd,amount:na,source:ns,notes:nn});
+      refreshAll();
+    };
+    box.appendChild(div);
+  });
+}
+
+/* -------- ADJUSTMENTS LIST RENDER (DEPOSIT/WITHDRAWAL) -------- */
+function renderAdjustments(adjs){
+  const box = $("adjList");
+  box.innerHTML = "";
+  adjs.sort((a,b)=> (a.date||"").localeCompare(b.date||""));
+  adjs.forEach(a=>{
+    const signLabel = a.type==="deposit" ? "Deposit" : "Withdrawal";
+    const div = document.createElement("div");
+    div.className="adjItem";
+    div.innerHTML = `
+      <div class="meta">
+        <b>${a.date}</b> · ${signLabel} · ${fmt(a.amount)}
+      </div>
+      ${a.notes? `<div class="small" style="margin-top:4px">${a.notes}</div>`:''}
+      <div class="actions" style="margin-top:6px">
+        <button class="btn secondary" data-a="edit">Edit</button>
+        <button class="btn danger" data-a="del">Delete</button>
+      </div>
+    `;
+    div.querySelector("[data-a='del']").onclick = async ()=>{
+      if (!confirm("Delete adjustment?")) return;
+      await deleteDoc(doc(db,"betting_bankroll",a.id));
+      refreshAll();
+    };
+    div.querySelector("[data-a='edit']").onclick = async ()=>{
+      const nd = prompt("Date (YYYY-MM-DD)", a.date) || a.date;
+      const nt = prompt("Type (deposit/withdrawal)", a.type) || a.type;
+      const na = Number(prompt("Amount", a.amount) || a.amount);
+      const nn = prompt("Notes (optional)", a.notes||"") || null;
+      await updateDoc(doc(db,"betting_bankroll",a.id),{
+        date:nd,type:(nt==="withdrawal"?"withdrawal":"deposit"),
+        amount:na,notes:nn
+      });
       refreshAll();
     };
     box.appendChild(div);
